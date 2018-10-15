@@ -14,7 +14,7 @@ app.use(cors({
   },
   maxAge: 5,
   allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token']
 }));
 
 // bodyparser:该中间件用于处理post请求的数据
