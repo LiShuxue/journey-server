@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "db-start": "sudo mongod",
-    "app-start": "node server.js",
     "app-watch": "supervisor server.js",
     "dev": "yarn db-start & yarn app-watch",
-    "prd": "yarn db-start & yarn app-start"
+    "start": "pm2 start mongod && pm2 start node server.js",
+    "stop": "pm2 stop mongod && pm2 stop node server",
+    "re-start": "yarn stop && yarn start"
   },
   "dependencies": {
     "jsonwebtoken": "^8.3.0",
