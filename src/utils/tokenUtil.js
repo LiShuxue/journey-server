@@ -56,7 +56,7 @@ const verifyRefreshToken = async (refresh_token, access_token) => {
 const verifyAccessToken = async ( ctx, next ) => {
     const authorization = ctx.get('Authorization');
     const access_token = authorization.split(' ')[1];
-    const refresh_token = ctx.get('refresh_token');
+    const refresh_token = ctx.get('refresh-token');  // nginx代理请求不支持header中包含下划线
 
     if (access_token === '' || refresh_token === '') {
         ctx.throw(401, `No access_token/refresh_token detected in http headers`);
