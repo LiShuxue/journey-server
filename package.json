@@ -1,0 +1,20 @@
+{
+  "name": "journey-server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "db-start": "sudo mongod",
+    "ws-start": "node server.js",
+    "dev": "yarn db-start & yarn ws-start"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.3.0",
+    "koa": "^2.5.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-multer": "^1.0.2",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "mongoose": "^5.2.13"
+  },
+  "devDependencies": { }
+}
