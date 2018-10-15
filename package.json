@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "db-start": "sudo mongod",
-    "ws-start": "node server.js",
+    "ws-start": "supervisor server.js",
     "dev": "yarn db-start & yarn ws-start"
   },
   "dependencies": {
