@@ -56,7 +56,7 @@ const saveImage = async ( ctx, next ) => {
             err
         }
     });
-    let imagePath = ctx.req.headers['x-forwarded-proto'] + '://' + ctx.req.headers['host'] + '/' + filename + '.' + type;
+    let imagePath = 'http://47.93.18.226:4000' + '/' + filename + '.' + type;
     ctx.status = 200;
     ctx.body = {
         successMsg: '图片上传成功!',
@@ -71,7 +71,7 @@ const removeImage = async (ctx, next) => {
     let isExist;
     let path;
     if (ctx.request.body.filename){
-        path = 'server/static/' + ctx.request.body.filename;
+        path = 'static/' + ctx.request.body.filename;
         isExist = fs.existsSync(path);
     }
 
