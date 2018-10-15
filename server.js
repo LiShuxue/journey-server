@@ -6,13 +6,8 @@ const db = require('./db/mongodb');
 const cors = require('koa2-cors');
 app.use(cors({
   origin: function(ctx) {
-    console.log('============================================');
-    console.log(ctx);
-    console.log('============================================');
-    if(ctx.header.host.indexOf('localhost') !== -1){
+    if(ctx.header.host.indexOf('localhost:4000') !== -1){
       return '*';
-    }else if(ctx.header.origin.indexOf('www.lishuxue.site')!== -1 || ctx.header.origin.indexOf('47.93.18.226')!== -1){
-      return ctx.header.origin;
     }else{
       return false;
     }
