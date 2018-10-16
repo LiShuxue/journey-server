@@ -11,9 +11,11 @@ let maxConnectTimes = 0;
 db.on('error', err=>{
   console.log('DB connect failed...');
   if(maxConnectTimes < 5){
-    maxConnectTimes++;
-    console.log('DB connect again...');
-    mongoose.connect(db_path);
+    setTimeout(()=>{
+      maxConnectTimes++;
+      console.log('DB connect again...');
+      mongoose.connect(db_path);
+    }, 2000);
   }else{
     console.log(`DB can't connect now becuase some reason...`);
   }
