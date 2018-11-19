@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "db-start": "sudo mongod",
+    "db-start": "mongod",
     "app-watch": "supervisor server.js",
     "dev": "yarn db-start & yarn app-watch",
     "start": "pm2 start mongod && pm2 start node server.js",
