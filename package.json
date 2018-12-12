@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "db-start": "mongod",
-    "app-watch": "supervisor server.js",
-    "dev": "yarn db-start & yarn app-watch",
+    "dev": "mongod & cross-env NODE_ENV=development node server.js",
     "start": "pm2 start mongod && pm2 start node server.js",
     "stop": "pm2 stop mongod && pm2 stop node server",
     "re-start": "yarn stop && yarn start"
@@ -20,5 +18,7 @@
     "koa2-cors": "^2.0.6",
     "mongoose": "^5.2.13"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "cross-env": "^5.2.0"
+  }
 }
