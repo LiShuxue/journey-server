@@ -56,7 +56,8 @@ const saveImage = async ( ctx, next ) => {
             err
         }
     });
-    let imagePath = 'http://47.93.18.226:4000' + '/' + filename + '.' + type;
+    let serverPath = process.env.NODE_ENV === 'production' ? 'http://47.93.18.226/' : 'http://localhost:4000/';
+    let imagePath = serverPath + filename + '.' + type;
     ctx.status = 200;
     ctx.body = {
         successMsg: '图片上传成功!',
