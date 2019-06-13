@@ -3,6 +3,8 @@ const app = new Koa();
 
 const db = require('./db/mongodb');
 
+const router = require('./src/routes');
+
 const cors = require('koa2-cors');
 app.use(cors({
   origin: function(ctx) {
@@ -21,15 +23,6 @@ app.use(cors({
 const bodyParser = require('koa-bodyparser');
 app.use(bodyParser());
 
-const Router = require('koa-router');
-const router = new Router();
-
-// 引入子路由
-const userRoute = require('./src/routes/userRoute');
-const blogRoute = require('./src/routes/blogRoute');
-// 路由中间件加载子路由
-router.use('/api/admin', userRoute.routes(), userRoute.allowedMethods());
-router.use('/api/blog', blogRoute.routes(), blogRoute.allowedMethods());
 // app加载路由中间件
 app.use(router.routes()).use(router.allowedMethods());
 
