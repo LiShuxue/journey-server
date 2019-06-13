@@ -31,79 +31,79 @@ const publishNewBlog = async ( ctx, next ) => {
     await next();
 }
 
-const saveImage = async ( ctx, next ) => {
-    let { path, mimetype, filename, originalname } = ctx.req.file;
-    let tmp_path = path;
-    let type = mimetype.substring(6);
-    let target_path = path + '.' + type;
-    let src = fs.createReadStream(tmp_path);
-    let dest = fs.createWriteStream(target_path);
-    await new Promise((resolve, reject)=>{
-        src.pipe(dest);
-        src.on('end', ()=>{
-            fs.unlinkSync(tmp_path);
-            resolve();
-        });
-        src.on('error', (err)=>{ 
-            src.close();
-            dest.close();
-            reject(err);
-        });
-    }).catch(err=>{
-        ctx.status = 200;
-        ctx.body = {
-            errMsg: '图片上传失败!',
-            err
-        }
-    });
-    let serverPath = process.env.NODE_ENV === 'production' ? 'http://47.93.18.226/' : 'http://localhost:4000/';
-    let imagePath = serverPath + filename + '.' + type;
-    ctx.status = 200;
-    ctx.body = {
-        successMsg: '图片上传成功!',
-        originalName: originalname,
-        serverFileName: filename + '.' + type,
-        imagePath
-    }
-    await next();
-}
+// const saveImage = async ( ctx, next ) => {
+//     let { path, mimetype, filename, originalname } = ctx.req.file;
+//     let tmp_path = path;
+//     let type = mimetype.substring(6);
+//     let target_path = path + '.' + type;
+//     let src = fs.createReadStream(tmp_path);
+//     let dest = fs.createWriteStream(target_path);
+//     await new Promise((resolve, reject)=>{
+//         src.pipe(dest);
+//         src.on('end', ()=>{
+//             fs.unlinkSync(tmp_path);
+//             resolve();
+//         });
+//         src.on('error', (err)=>{ 
+//             src.close();
+//             dest.close();
+//             reject(err);
+//         });
+//     }).catch(err=>{
+//         ctx.status = 200;
+//         ctx.body = {
+//             errMsg: '图片上传失败!',
+//             err
+//         }
+//     });
+//     let serverPath = process.env.NODE_ENV === 'production' ? 'http://47.93.18.226/' : 'http://localhost:4000/';
+//     let imagePath = serverPath + filename + '.' + type;
+//     ctx.status = 200;
+//     ctx.body = {
+//         successMsg: '图片上传成功!',
+//         originalName: originalname,
+//         serverFileName: filename + '.' + type,
+//         imagePath
+//     }
+//     await next();
+// }
 
-const removeImage = async (ctx, next) => {
-    let isExist;
-    let path;
-    if (ctx.request.body.filename){
-        path = 'static/' + ctx.request.body.filename;
-        isExist = fs.existsSync(path);
-    }
+// const removeImage = async (ctx, next) => {
+//     let isExist;
+//     let path;
+//     if (ctx.request.body.filename){
+//         path = 'static/' + ctx.request.body.filename;
+//         isExist = fs.existsSync(path);
+//     }
 
-    if(path && isExist){
-        await new Promise((resolve, reject)=>{
-            fs.unlink(path, (err)=>{
-                if(err){
-                    reject(err)
-                }
-                resolve()
-            });
-        }).catch(err=>{
-            ctx.status = 500;
-            ctx.body = {
-                errMsg: '图片删除失败!',
-                err
-            }
-        });
-        ctx.status = 200;
-        ctx.body = {
-            successMsg: '图片删除成功!',
-        }
-    }else{
-        ctx.status = 200;
-        ctx.body = {
-            errMsg: '图片不存在!'
-        }
-    }
+//     if(path && isExist){
+//         await new Promise((resolve, reject)=>{
+//             fs.unlink(path, (err)=>{
+//                 if(err){
+//                     reject(err)
+//                 }
+//                 resolve()
+//             });
+//         }).catch(err=>{
+//             ctx.status = 500;
+//             ctx.body = {
+//                 errMsg: '图片删除失败!',
+//                 err
+//             }
+//         });
+//         ctx.status = 200;
+//         ctx.body = {
+//             successMsg: '图片删除成功!',
+//         }
+//     }else{
+//         ctx.status = 200;
+//         ctx.body = {
+//             errMsg: '图片不存在!'
+//         }
+//     }
     
-    await next();
-}
+//     await next();
+// }
 
 const getAllBlog = async (ctx) => {
     let blogList = await BlogModel.getAllBlog().catch(err=>{
@@ -157,7 +157,7 @@ const getAllBlog = async (ctx) => {
 
 module.exports = {
     publishNewBlog,
-    saveImage,
-    removeImage,
+    // saveImage,
+    // removeImage,
     getAllBlog
 };
