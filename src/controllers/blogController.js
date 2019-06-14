@@ -1,5 +1,4 @@
 const BlogModel = require('../models/Blog');
-const fs = require('fs');
 
 const publishNewBlog = async ( ctx, next ) => {
     let blog = ctx.request.body.blog;
@@ -8,23 +7,17 @@ const publishNewBlog = async ( ctx, next ) => {
     blog.like = 0;
     blog.comments = [];
 
-    let result = await BlogModel.publishBlog(blog).catch((err)=>{
-        ctx.status = 500;
-        ctx.body = {
-            errMsg: '发表文章失败!',
-            err
-        }
-    });
-
-    if(result && result._id){
+    try {
+        await BlogModel.publishBlog(blog);
         ctx.status = 200;
         ctx.body = {
             successMsg: '文章发表成功!'
         }
-    }else{
-        ctx.status = 200;
+    } catch (err) {
+        ctx.status = 500;
         ctx.body = {
-            errMsg: '发表文章失败!'
+            errMsg: '发表文章失败!',
+            err
         }
     }
 
@@ -106,17 +99,19 @@ const publishNewBlog = async ( ctx, next ) => {
 // }
 
 const getAllBlog = async (ctx) => {
-    let blogList = await BlogModel.getAllBlog().catch(err=>{
+    try {
+        let blogList = await BlogModel.getAllBlog();
+        ctx.status = 200;
+        ctx.body = {
+            successMsg: '获取博客列表成功!',
+            blogList
+        }
+    } catch (err) {
         ctx.status = 500;
         ctx.body = {
             errMsg: '获取博客列表失败!',
             err
         }
-    });
-    ctx.status = 200;
-    ctx.body = {
-        successMsg: '获取博客列表成功!',
-        blogList
     }
 }
 

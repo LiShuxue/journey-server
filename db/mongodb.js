@@ -3,7 +3,7 @@ const db_config = require('./db_config');
 const db_path = 'mongodb://' + db_config.host + ':' + db_config.port + '/' + db_config.name
 
 mongoose.connect(db_path);
-mongoose.Promise =  global.Promise;
+mongoose.Promise =  Promise;
 
 const db = mongoose.connection;
 
