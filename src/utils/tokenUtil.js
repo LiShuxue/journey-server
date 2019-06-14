@@ -25,46 +25,88 @@ const createRefreshToken = ()=>{
     return token;
 }
 
-const verifyRefreshToken = async (refresh_token, access_token) => {
-    try{
-        jwt.verify(refresh_token, secret);
-    }catch(err){
-        return Promise.reject(err);
-    }
-
-    let decoded = jwt.decode(access_token);
-    let username = decoded.username;
-    let new_access_token = createAccessToken({username});
-    let new_refresh_token = createRefreshToken();
-
-    return Promise.resolve({
-        new_access_token,
-        new_refresh_token
-    })
-}
-
 const verifyAccessToken = async ( ctx, next ) => {
     const authorization = ctx.get('Authorization');
     const access_token = authorization.split(' ')[1];
     const refresh_token = ctx.get('refresh-token');  // nginx代理请求不支持header中包含下划线
 
     if (access_token === '' || refresh_token === '') {
-        ctx.throw(401, `No access_token/refresh_token detected in http headers`);
+        ctx.status = 401;
+        ctx.body = {
+            errMsg: '请求头中没有Token!'
+        }
+        return;
     }
     
     try {
         jwt.verify(access_token, secret);
-    }catch(err){
-        if(err.name === 'TokenExpiredError'){
-            let result = await verifyRefreshToken(refresh_token, access_token).catch((err)=>{
-                ctx.throw(401, err);
-            });
-            ctx.token = result;
-        }else{
-            ctx.throw(401, err);
-        }
+    } catch (err) {
+        await handleAccessTokenError(err, ctx, next, access_token, refresh_token);
     }
     await next();
+}
+
+const handleAccessTokenError = async (err, ctx, next, access_token, refresh_token) => {
+    if(err.name !== 'TokenExpiredError'){
+        ctx.status = 401;
+        ctx.body = {
+            errMsg: 'Access_Token验证失败!',
+            err
+        }
+        return;
+    }
+
+    // token过期自动刷新token
+    // 1.先验证refresh_token
+    // 2.生成新的token
+    try {
+        await verifyRefreshToken(refresh_token);
+    } catch (err) {
+        ctx.status = 401;
+        ctx.body = {
+            errMsg: 'Refresh_Token验证失败!',
+            err
+        }
+        return;
+    }
+
+    try {
+        ctx.token = await autoGenerateNewToken(access_token);
+    } catch (err) {
+        ctx.status = 401;
+        ctx.body = {
+            errMsg: '生成新的token失败!',
+            err
+        }
+    }
+}
+
+const verifyRefreshToken = (refresh_token) => {
+    return new Promise((resolve, reject) => {
+        try{
+            jwt.verify(refresh_token, secret);
+            resolve();
+        }catch(err){
+            reject(err);
+        }
+    });
+}
+
+const autoGenerateNewToken = (access_token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            let decoded = jwt.decode(access_token);
+            let username = decoded.username;
+            let new_access_token = createAccessToken({username});
+            let new_refresh_token = createRefreshToken();
+            resolve({
+                new_access_token,
+                new_refresh_token
+            })
+        } catch (err) {
+            reject(err)
+        }
+    });
 }
 
 const returnNewToken = (ctx) => {
