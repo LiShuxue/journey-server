@@ -30,16 +30,6 @@ const login = async ( ctx ) => {
     }else{
         let access_token = tokenUtil.createAccessToken({username});
         let refresh_token = tokenUtil.createRefreshToken();
-        let result = await Promise.all([
-            UserModel.saveAccessToken(doc, access_token),
-            UserModel.saveRefreshToken(doc, refresh_token)
-        ]).catch((err)=>{
-            ctx.status = 500;
-            ctx.body = { 
-                errMsg: '数据库保存token出错!',
-                err
-            };
-        });
         ctx.status = 200;
         ctx.body = { 
             successMsg: '登录成功!',
@@ -55,13 +45,10 @@ const register = async ( ctx ) => {
         .update(ctx.request.body.password)
         .digest('hex');
     let username = ctx.request.body.username;
-    let access_token = tokenUtil.createAccessToken({username});
-    let refresh_token = tokenUtil.createRefreshToken();
+
     let user = {
         username: username,
-        password: hashPass,
-        access_token: access_token,
-        refresh_token: refresh_token
+        password: hashPass
     };
     
     let doc = await UserModel.getUser(username).catch((err)=>{
@@ -90,9 +77,7 @@ const register = async ( ctx ) => {
             ctx.status = 200;
             ctx.body = {
                 successMsg: '注册成功!',
-                username: result.username,
-                access_token: result.access_token,
-                refresh_token: result.refresh_token
+                username: result.username
             }
         }else{
             ctx.status = 200;

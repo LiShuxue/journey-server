@@ -1,11 +1,10 @@
 const secret = 'secret-key';
 const jwt = require('jsonwebtoken');
-const UserModel = require('../models/User');
 
 const initPayload = {
     iss: "Journey", //(Issuer) jwt签发者
-    sub: "test@example.com", //(Subject) 该jwt所面向的用户
-    aud: "www.example.com" //(Audience) 接收jwt的一方
+    sub: "www.lishuxue.site", //(Subject) 该jwt所面向的用户
+    aud: "www.lishuxue.site" //(Audience) 接收jwt的一方
 };
 
 const createAccessToken = (payload)=>{
@@ -37,16 +36,7 @@ const verifyRefreshToken = async (refresh_token, access_token) => {
     let username = decoded.username;
     let new_access_token = createAccessToken({username});
     let new_refresh_token = createRefreshToken();
-    let user, result;
-    try{
-        user = await UserModel.getUser(username);
-        result = await Promise.all([
-            UserModel.saveAccessToken(user, new_access_token),
-            UserModel.saveRefreshToken(user, new_refresh_token)
-        ]);
-    }catch(err){
-        return Promise.reject(err);
-    }
+
     return Promise.resolve({
         new_access_token,
         new_refresh_token
