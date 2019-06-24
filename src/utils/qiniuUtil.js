@@ -4,8 +4,7 @@ const accessKey = 'uHIW2IbsCKWoeaEW3x5tX6ajX3xL010MmmWar5vC';
 const secretKey = 'BJzBW7iaoRMh370HdlWSI4gzjL9tbkn-J19uzedC';
 const bucket = 'journey';
 const uploadDomain = 'https://upload-z1.qiniup.com/'; 
-const downloadDomain = 'http://psu83pzez.bkt.clouddn.com/';
-
+const downloadDomain = 'http://cdn.lishuxue.site/';
 
 // 鉴权对象
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);

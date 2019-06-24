@@ -49,7 +49,7 @@ const publishNewBlog = async ( ctx, next ) => {
 //             err
 //         }
 //     });
-//     let serverPath = process.env.NODE_ENV === 'production' ? 'http://47.93.18.226/' : 'http://localhost:4000/';
+//     let serverPath = process.env.NODE_ENV === 'production' ? 'http://lishuxue.site/' : 'http://localhost:4000/';
 //     let imagePath = serverPath + filename + '.' + type;
 //     ctx.status = 200;
 //     ctx.body = {
