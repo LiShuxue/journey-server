@@ -1,0 +1,12 @@
+{
+  "apps": [{
+    "name": "journey-server",
+    "script": "./server.js",
+    "env_dev": {
+      "NODE_ENV": "development"
+    },
+    "env_prd": {
+      "NODE_ENV": "production"
+    }
+  }]
+}
