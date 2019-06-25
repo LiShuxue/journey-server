@@ -8,10 +8,10 @@ const router = require('./src/routes');
 const cors = require('koa2-cors');
 app.use(cors({
   origin: function(ctx) {
-    if(ctx.header.host.indexOf('localhost:4000') !== -1){
+    if(process.env.NODE_ENV !== 'production'){
       return '*';
     }else{
-      return false;
+      return 'http://lishuxue.site';
     }
   },
   maxAge: 5,

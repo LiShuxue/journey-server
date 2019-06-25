@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "mongod & cross-env NODE_ENV=development node server.js",
-    "start": "pm2 start mongod && pm2 start node server.js",
-    "stop": "pm2 stop mongod && pm2 stop node server",
+    "start": "pm2 start mongod && pm2 start pm2.config.json --env prd",
+    "stop": "pm2 stop all",
     "re-start": "yarn stop && yarn start"
   },
   "dependencies": {
