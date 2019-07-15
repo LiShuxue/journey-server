@@ -25,7 +25,54 @@ const getUser = (username) => {
     })
 }
 
+const getUserList = () => {
+    return new Promise((resolve, reject)=>{
+        User.find({}, (err, doc)=>{
+            if(err) reject(err);
+            resolve(doc);
+        });
+    })
+}
+
+const updateUser = (id, user) => {
+    return new Promise((resolve, reject)=>{
+        User.updateOne({ 
+            _id: id
+        }, {
+            $set: {
+                username: user.username,
+                password: user.password
+            }
+        }, (err, doc)=>{
+            if(err) reject(err);
+            resolve(doc);
+        });
+    })
+}
+
+const deleteUser = (id) => {
+    return new Promise((resolve, reject)=>{
+        User.deleteOne({
+            _id: id
+        }, (err) => {
+            if(err) reject(err);
+            resolve();
+        })
+    })
+}
+
+const deleteAllUser = (ids) => {
+    let promiseArr = ids.map(id => {
+        return deleteUser(id)
+    });
+    return Promise.all(promiseArr);
+}
+
 module.exports = {
     createUser,
-    getUser
+    getUser,
+    getUserList,
+    updateUser,
+    deleteUser,
+    deleteAllUser
 };

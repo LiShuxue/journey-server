@@ -81,7 +81,70 @@ const register = async ( ctx ) => {
     }
 }
 
+const userList = async (ctx, next) => {
+    try {
+        let userList = await UserModel.getUserList();
+        ctx.status = 200;
+        ctx.body = {
+            successMsg: '获取用户列表成功!',
+            userList
+        }
+    } catch (err) {
+        ctx.status = 500;
+        ctx.body = {
+            errMsg: '获取用户列表失败!',
+            err
+        }
+    }
+    await next();
+}
+const deleteUser = async (ctx, next) => {
+    try {
+        let ids = ctx.request.body.ids;
+        if (ids.length > 1) {
+            await UserModel.deleteAllUser(ids);
+        } else if (ids.length === 1) {
+            await UserModel.deleteUser(ids[0]);
+        }
+        
+        ctx.status = 200;
+        ctx.body = {
+            successMsg: '删除用户成功!'
+        }
+    } catch (err) {
+        ctx.status = 500;
+        ctx.body = {
+            errMsg: '删除用户失败!',
+            err
+        }
+    }
+    await next();
+}
+const updateUser = async (ctx, next) => {
+    try {
+        let user = ctx.request.body.user;
+        user.password = crypto.createHmac('sha256', secret)
+            .update(ctx.request.body.user.password)
+            .digest('hex');
+        await UserModel.updateUser(user._id, user);
+        ctx.status = 200;
+        ctx.body = {
+            successMsg: '更新用户成功!'
+        }
+    } catch (err) {
+        ctx.status = 500;
+        ctx.body = {
+            errMsg: '更新用户失败!',
+            err
+        }
+    }
+    await next();
+}
+
 module.exports = {
     login,
-    register
+    register,
+    userList,
+    deleteUser,
+    updateUser
 };
