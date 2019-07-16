@@ -101,11 +101,7 @@ const userList = async (ctx, next) => {
 const deleteUser = async (ctx, next) => {
     try {
         let ids = ctx.request.body.ids;
-        if (ids.length > 1) {
-            await UserModel.deleteAllUser(ids);
-        } else if (ids.length === 1) {
-            await UserModel.deleteUser(ids[0]);
-        }
+        await UserModel.deleteAllUser(ids);
         
         ctx.status = 200;
         ctx.body = {
