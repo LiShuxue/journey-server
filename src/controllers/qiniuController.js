@@ -1,7 +1,7 @@
 const qiniu = require('../utils/qiniuUtil');
 
 const getQiniuUploadToken = async (ctx, next) => {
-  let token = qiniu.uploadToken;
+  let token = qiniu.uploadToken();
   ctx.status = 200;
   ctx.body = {
     successMsg: '获取七牛uploadToken成功！',
