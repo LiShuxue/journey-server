@@ -37,26 +37,52 @@ const getAllBlog = () => {
         });
     })
 }
-// const getAllBlogSortBySee = () => {
-//     return new Promise((resolve, reject)=>{
-//         Blog.find({}, (err,doc)=>{
-//             if(err) reject(err);
-//             resolve(doc);
-//         }).sort({see: -1}).limit(10); // see字段降序排序，取前10条
-//     })
-// }
 
-// const getAllTags = () =>{
-//     return new Promise((resolve, reject)=>{
-//         // 查找某一列
-//         Blog.find({}, {tags: 1, _id: 0}, (err, doc)=>{
-//             if(err) reject(err);
-//             resolve(doc);
-//         })
-//     });
-// }
+const updateBlog = (id, blog) => {
+    return new Promise((resolve, reject)=>{
+        Blog.updateOne({ 
+            _id: id
+        }, {
+            $set: {
+                title: blog.title,
+                subTitle: blog.subTitle,
+                htmlContent: blog.htmlContent,
+                markdownContent: blog.markdownContent,
+                image: blog.image,
+                isOriginal: blog.isOriginal,
+                updateTime: Date.now(),
+                category: blog.category,
+                tags: blog.tags
+            }
+        }, (err, doc)=>{
+            if(err) reject(err);
+            resolve(doc);
+        });
+    })
+}
+
+const deleteBlog = (id) => {
+    return new Promise((resolve, reject)=>{
+        Blog.deleteOne({
+            _id: id
+        }, (err) => {
+            if(err) reject(err);
+            resolve();
+        })
+    })
+}
+
+const deleteAllBlog = (ids) => {
+    let promiseArr = ids.map(id => {
+        return deleteBlog(id)
+    });
+    return Promise.all(promiseArr);
+}
+
 
 module.exports = {
     publishBlog,
-    getAllBlog
+    getAllBlog,
+    updateBlog,
+    deleteAllBlog
 };
