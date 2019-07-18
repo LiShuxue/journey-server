@@ -6,9 +6,13 @@ const blogSchema = new Schema({
     subTitle: String,
     htmlContent: String,
     markdownContent: String,
-    image: String,
+    image: {
+        name: String,
+        url: String
+    },
     isOriginal: Boolean,
     publishTime: Date,
+    updateTime: Date,
     see: Number,
     like: Number,
     category: String,
