@@ -3,6 +3,7 @@ const BlogModel = require('../models/Blog');
 const publishNewBlog = async ( ctx, next ) => {
     let blog = ctx.request.body.blog;
     blog.publishTime = Date.now();
+    blog.updateTime = Date.now();
     blog.see = 0;
     blog.like = 0;
     blog.comments = [];
