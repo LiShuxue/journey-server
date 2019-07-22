@@ -2,8 +2,10 @@ const UserModel = require('../models/User');
 const crypto = require('crypto');
 const secret = 'secret-key';
 const tokenUtil = require('../utils/tokenUtil');
+const sentry = require('../utils/sentry');
 
 const login = async ( ctx ) => {
+    sentry.addBreadcrumb('controllers/userController.js --> login');
     let username = ctx.request.body.username;
     let hashPass = crypto.createHmac('sha256', secret)
         .update(ctx.request.body.password)
@@ -38,6 +40,7 @@ const login = async ( ctx ) => {
             refresh_token
         };
     } catch (err) {
+        sentry.captureException(err);
         ctx.status = 500;
         ctx.body = {
             errMsg: '数据库查找用户名出错!',
@@ -47,6 +50,7 @@ const login = async ( ctx ) => {
 }
 
 const register = async ( ctx ) => {
+    sentry.addBreadcrumb('controllers/userController.js --> register');
     let username = ctx.request.body.username;
     let hashPass = crypto.createHmac('sha256', secret)
         .update(ctx.request.body.password)
@@ -73,6 +77,7 @@ const register = async ( ctx ) => {
             }
             return;
         }
+        sentry.captureException(err);
         ctx.status = 500;
         ctx.body = {
             errMsg: '注册失败!',
@@ -82,6 +87,7 @@ const register = async ( ctx ) => {
 }
 
 const userList = async (ctx, next) => {
+    sentry.addBreadcrumb('controllers/userController.js --> userList');
     try {
         let userList = await UserModel.getUserList();
         ctx.status = 200;
@@ -90,6 +96,7 @@ const userList = async (ctx, next) => {
             userList
         }
     } catch (err) {
+        sentry.captureException(err);
         ctx.status = 500;
         ctx.body = {
             errMsg: '获取用户列表失败!',
@@ -99,6 +106,7 @@ const userList = async (ctx, next) => {
     await next();
 }
 const deleteUser = async (ctx, next) => {
+    sentry.addBreadcrumb('controllers/userController.js --> deleteUser');
     try {
         let ids = ctx.request.body.ids;
         await UserModel.deleteAllUser(ids);
@@ -108,6 +116,7 @@ const deleteUser = async (ctx, next) => {
             successMsg: '删除用户成功!'
         }
     } catch (err) {
+        sentry.captureException(err);
         ctx.status = 500;
         ctx.body = {
             errMsg: '删除用户失败!',
@@ -117,6 +126,7 @@ const deleteUser = async (ctx, next) => {
     await next();
 }
 const updateUser = async (ctx, next) => {
+    sentry.addBreadcrumb('controllers/userController.js --> updateUser');
     try {
         let user = ctx.request.body.user;
         user.password = crypto.createHmac('sha256', secret)
@@ -128,6 +138,7 @@ const updateUser = async (ctx, next) => {
             successMsg: '更新用户成功!'
         }
     } catch (err) {
+        sentry.captureException(err);
         ctx.status = 500;
         ctx.body = {
             errMsg: '更新用户失败!',

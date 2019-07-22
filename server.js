@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const app = new Koa();
+const sentry = require('./src/utils/sentry');
 
 const db = require('./db/mongodb');
 
@@ -31,6 +32,10 @@ app.use(router.routes()).use(router.allowedMethods());
 // app.use(static(__dirname + '/static', {
 //   maxage: 1000 * 60 * 60 * 24 * 365
 // }));
+
+app.on('error', (err, ctx) => {
+  sentry.captureException(err);
+});
 
 app.listen(4000, ()=>{
   console.log('server starting...')

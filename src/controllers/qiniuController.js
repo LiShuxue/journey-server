@@ -1,6 +1,8 @@
 const qiniu = require('../utils/qiniuUtil');
+const sentry = require('../utils/sentry');
 
 const getQiniuUploadToken = async (ctx, next) => {
+  sentry.addBreadcrumb('controllers/qiniuController.js --> getQiniuUploadToken');
   let token = qiniu.uploadToken();
   ctx.status = 200;
   ctx.body = {
@@ -13,6 +15,7 @@ const getQiniuUploadToken = async (ctx, next) => {
 }
 
 const deleteFile = async (ctx, next) => {
+  sentry.addBreadcrumb('controllers/qiniuController.js --> deleteFile');
   let filename = ctx.request.body.filename;
   try {
     let result = await qiniu.deleteFileFromQiniu(filename);
@@ -22,6 +25,7 @@ const deleteFile = async (ctx, next) => {
         result
     };
   } catch (err) {
+    sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
         errMsg: '删除文件失败!',
