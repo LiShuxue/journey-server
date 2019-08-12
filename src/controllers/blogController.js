@@ -10,6 +10,10 @@ const publishNewBlog = async ( ctx, next ) => {
     blog.like = 0;
     blog.comments = [];
 
+    if (!blog.image || !blog.image.name || !blog.image.url) {
+        blog.image = {name: '', url: ''}
+    }
+
     try {
         await BlogModel.publishBlog(blog);
         ctx.status = 200;
@@ -71,6 +75,9 @@ const updateBlog = async (ctx, next) => {
     sentry.addBreadcrumb('controllers/blogController.js --> updateBlog');
     try {
         let blog = ctx.request.body.blog;
+        if (!blog.image || !blog.image.name || !blog.image.url) {
+            blog.image = {name: '', url: ''}
+        }
         await BlogModel.updateBlog(blog._id, blog);
         ctx.status = 200;
         ctx.body = {
