@@ -1,18 +1,21 @@
-const UserModel = require('../models/User');
-const crypto = require('crypto');
-const secret = 'secret-key';
-const tokenUtil = require('../utils/tokenUtil');
-const sentry = require('../utils/sentry');
+import UserModel, { IUser } from '../models/User';
+import crypto from 'crypto';
+import { createAccessToken, createRefreshToken } from '../middleware/tokenMiddleware';
+import sentry from '../utils/sentry';
+import { Context } from 'koa';
+import { Model } from 'mongoose';
 
-const login = async ( ctx ) => {
+const secret = 'secret-key';
+
+const login = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> login');
-    let username = ctx.request.body.username;
-    let hashPass = crypto.createHmac('sha256', secret)
+    let username: string = ctx.request.body.username;
+    let hashPass: string = crypto.createHmac('sha256', secret)
         .update(ctx.request.body.password)
         .digest('hex');
 
     try{
-        let doc = await UserModel.getUser(username);
+        let doc: IUser = await UserModel.getUser(username);
 
         if(!doc) {
             ctx.status = 200;
@@ -30,8 +33,8 @@ const login = async ( ctx ) => {
             return;
         }
 
-        let access_token = tokenUtil.createAccessToken({username});
-        let refresh_token = tokenUtil.createRefreshToken();
+        let access_token: string = createAccessToken({username});
+        let refresh_token: string = createRefreshToken();
         ctx.status = 200;
         ctx.body = { 
             successMsg: '登录成功!',
@@ -49,20 +52,20 @@ const login = async ( ctx ) => {
     }
 }
 
-const register = async ( ctx ) => {
+const register = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> register');
-    let username = ctx.request.body.username;
-    let hashPass = crypto.createHmac('sha256', secret)
+    let username: string = ctx.request.body.username;
+    let hashPass: string = crypto.createHmac('sha256', secret)
         .update(ctx.request.body.password)
         .digest('hex');
 
-    let user = {
+    let user: IUser = new Model({
         username: username,
         password: hashPass
-    };
+    });
 
     try {
-        let result = await UserModel.createUser(user);
+        let result: IUser = await UserModel.createUser(user);
         ctx.status = 200;
         ctx.body = {
             successMsg: '注册成功!',
@@ -86,10 +89,10 @@ const register = async ( ctx ) => {
     }
 }
 
-const userList = async (ctx, next) => {
+const userList = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> userList');
     try {
-        let userList = await UserModel.getUserList();
+        let userList: IUser[] = await UserModel.getUserList();
         ctx.status = 200;
         ctx.body = {
             successMsg: '获取用户列表成功!',
@@ -103,12 +106,11 @@ const userList = async (ctx, next) => {
             err
         }
     }
-    await next();
 }
-const deleteUser = async (ctx, next) => {
+const deleteUser = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> deleteUser');
     try {
-        let ids = ctx.request.body.ids;
+        let ids: string[] = ctx.request.body.ids;
         await UserModel.deleteAllUser(ids);
         
         ctx.status = 200;
@@ -123,12 +125,11 @@ const deleteUser = async (ctx, next) => {
             err
         }
     }
-    await next();
 }
-const updateUser = async (ctx, next) => {
+const updateUser = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> updateUser');
     try {
-        let user = ctx.request.body.user;
+        let user: IUser = ctx.request.body.user;
         user.password = crypto.createHmac('sha256', secret)
             .update(ctx.request.body.user.password)
             .digest('hex');
@@ -145,10 +146,9 @@ const updateUser = async (ctx, next) => {
             err
         }
     }
-    await next();
 }
 
-module.exports = {
+export default {
     login,
     register,
     userList,

@@ -1,9 +1,10 @@
-const CategoryModel = require('../models/Category');
-const sentry = require('../utils/sentry');
+import CategoryModel, { ICategory } from '../models/Category';
+import sentry from '../utils/sentry';
+import { Context } from 'koa';
 
-const addCategory = async (ctx, next) => {
+const addCategory = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/categoryController.js --> addCategory');
-    let category = ctx.request.body.category;
+    let category: ICategory = ctx.request.body.category;
     try {
         await CategoryModel.addCategory(category);
         ctx.status = 200;
@@ -18,13 +19,12 @@ const addCategory = async (ctx, next) => {
             err
         }
     }
-    await next();
 }
 
-const getAllCategory = async (ctx) => {
+const getAllCategory = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/categoryController.js --> getAllCategory');
     try {
-        let categoryList = await CategoryModel.getAllCategory();
+        let categoryList: ICategory[] = await CategoryModel.getAllCategory();
         ctx.status = 200;
         ctx.body = {
             successMsg: '查找类别成功!',
@@ -40,7 +40,7 @@ const getAllCategory = async (ctx) => {
     } 
 }
 
-module.exports = {
+export default {
     addCategory,
     getAllCategory
 }
