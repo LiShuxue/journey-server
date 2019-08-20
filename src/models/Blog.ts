@@ -1,7 +1,35 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema, Document, Model, model } from 'mongoose';
 
-const blogSchema = new Schema({
+interface IImage {
+    name: string,
+    url: string
+}
+interface ITag {
+    [index: number]: string
+}
+interface IComment {
+    arthur: string,
+    date: Date,
+    content: string
+}
+
+export interface IBlog extends Document {
+    title: string,
+    subTitle: string,
+    htmlContent: string,
+    markdownContent: string,
+    image: IImage,
+    isOriginal: boolean,
+    publishTime: number,
+    updateTime: number,
+    see: number,
+    like: number,
+    category: string,
+    tags: ITag,
+    comments: IComment[]
+}
+
+const blogSchema: Schema = new Schema({
     title: String,
     subTitle: String,
     htmlContent: String,
@@ -22,14 +50,14 @@ const blogSchema = new Schema({
     collection: 'Blog'
 });
 
-const Blog = mongoose.model('Blog', blogSchema);
+const Blog: Model<IBlog, {}> = model<IBlog>('Blog', blogSchema);
 
 
-const publishBlog = (blog) => {
+const publishBlog = (blog: IBlog): Promise<IBlog> => {
     return Blog.create(blog);
 }
 
-const getAllBlog = () => {
+const getAllBlog = (): Promise<IBlog[]> => {
     return new Promise((resolve, reject)=>{
         Blog.find({}, (err,doc)=>{
             if(err) reject(err);
@@ -38,7 +66,7 @@ const getAllBlog = () => {
     })
 }
 
-const updateBlog = (id, blog) => {
+const updateBlog = (id: string, blog: IBlog): Promise<IBlog> => {
     return new Promise((resolve, reject)=>{
         Blog.updateOne({ 
             _id: id
@@ -61,7 +89,7 @@ const updateBlog = (id, blog) => {
     })
 }
 
-const deleteBlog = (id) => {
+const deleteBlog = (id: string): Promise<any> => {
     return new Promise((resolve, reject)=>{
         Blog.deleteOne({
             _id: id
@@ -72,7 +100,7 @@ const deleteBlog = (id) => {
     })
 }
 
-const deleteAllBlog = (ids) => {
+const deleteAllBlog = (ids: string[]): Promise<any> => {
     let promiseArr = ids.map(id => {
         return deleteBlog(id)
     });
@@ -80,9 +108,9 @@ const deleteAllBlog = (ids) => {
 }
 
 
-module.exports = {
+export default {
     publishBlog,
     getAllBlog,
     updateBlog,
     deleteAllBlog
-};
+}

@@ -1,11 +1,12 @@
-const Router = require('koa-router');
-const router = new Router();
+import Router from 'koa-router';
 
 // 引入子路由
-const userRoute = require('./userRoute');
-const blogRoute = require('./blogRoute');
-const qiniuRoute = require('./qiniuRoute');
-const categoryRoute = require('./categoryRoute');
+import userRoute from './userRoute';
+import blogRoute from './blogRoute';
+import qiniuRoute from './qiniuRoute';
+import categoryRoute from './categoryRoute';
+
+const router = new Router();
 
 // 路由中间件加载子路由
 router.use('/blog-api/admin', userRoute.routes(), userRoute.allowedMethods());
@@ -13,4 +14,4 @@ router.use('/blog-api/blog', blogRoute.routes(), blogRoute.allowedMethods());
 router.use('/blog-api/qiniu', qiniuRoute.routes(), qiniuRoute.allowedMethods());
 router.use('/blog-api/blog/category', categoryRoute.routes(), categoryRoute.allowedMethods());
 
-module.exports = router;
+export default router;

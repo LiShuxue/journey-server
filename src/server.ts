@@ -1,14 +1,16 @@
-const Koa = require('koa');
-const app = new Koa();
-const sentry = require('./src/utils/sentry');
+import Koa from 'koa';
+import db from './db/mongodb';
+import sentry from './utils/sentry';
+import router from './routes';
+import cors from 'koa2-cors';
+import bodyParser from 'koa-bodyparser';
+import { tokenMiddleware } from './middleware/tokenMiddleware';
 
-const db = require('./db/mongodb');
+const app: Koa = new Koa();
+db.dbStart();
 
-const router = require('./src/routes');
-
-const cors = require('koa2-cors');
 app.use(cors({
-  origin: function(ctx) {
+  origin: () => {
     if(process.env.NODE_ENV !== 'production'){
       return '*';
     }else{
@@ -21,22 +23,18 @@ app.use(cors({
 }));
 
 // bodyparser:该中间件用于处理post请求的数据
-const bodyParser = require('koa-bodyparser');
 app.use(bodyParser());
+
+// 处理token
+app.use(tokenMiddleware);
 
 // app加载路由中间件
 app.use(router.routes()).use(router.allowedMethods());
 
-// 该中间件用来提供静态文件服务
-// const static = require('koa-static');
-// app.use(static(__dirname + '/static', {
-//   maxage: 1000 * 60 * 60 * 24 * 365
-// }));
-
-app.on('error', (err, ctx) => {
+app.on('error', (err: never) => {
   sentry.captureException(err);
 });
 
-app.listen(4000, ()=>{
+app.listen(4000, () => {
   console.log('server starting...')
 });
