@@ -44,11 +44,7 @@ const verifyAccessToken = async ( ctx: Context ): Promise<any> => {
     const refresh_token: string = ctx.get('refresh-token');  // nginx代理请求不支持header中包含下划线
 
     if (access_token === '' || refresh_token === '') {
-        ctx.status = 401;
-        ctx.body = {
-            errMsg: '请求头中没有Token!'
-        }
-        return;
+        throw({errMsg: '请求头中没有Token!'});
     }
     
     try {
@@ -60,12 +56,7 @@ const verifyAccessToken = async ( ctx: Context ): Promise<any> => {
 
 const handleAccessTokenError = async (err: jwt.JsonWebTokenError, ctx: Context, access_token: string, refresh_token: string): Promise<any> => {
     if(err.name !== 'TokenExpiredError'){
-        ctx.status = 401;
-        ctx.body = {
-            errMsg: 'Access_Token验证失败!',
-            err
-        }
-        return;
+        throw({errMsg: 'Access_Token验证失败!'});
     }
 
     // token过期自动刷新token
@@ -74,22 +65,13 @@ const handleAccessTokenError = async (err: jwt.JsonWebTokenError, ctx: Context, 
     try {
         await verifyRefreshToken(refresh_token);
     } catch (err) {
-        ctx.status = 401;
-        ctx.body = {
-            errMsg: 'Refresh_Token验证失败!',
-            err
-        }
-        return;
+        throw({errMsg: 'Refresh_Token验证失败!'});
     }
 
     try {
         ctx.token = await autoGenerateNewToken(access_token);
     } catch (err) {
-        ctx.status = 401;
-        ctx.body = {
-            errMsg: '生成新的token失败!',
-            err
-        }
+        throw({errMsg: '生成新的token失败!'});
     }
 }
 
@@ -123,8 +105,8 @@ const autoGenerateNewToken = (access_token: string): Promise<any> => {
 
 const returnNewToken = (ctx: Context): void => {
     if(ctx.token && ctx.token.new_access_token && ctx.token.new_refresh_token){
-        ctx.body.new_access_token = ctx.token.new_access_token;
-        ctx.body.new_refresh_token = ctx.token.new_refresh_token;
+        ctx.set('new-access-token', ctx.token.new_access_token);
+        ctx.set('new-refresh-token', ctx.token.new_refresh_token);
     }
 }
 
@@ -132,8 +114,15 @@ export async function tokenMiddleware(ctx: Context, next: Function): Promise<any
     if (handleNotNeedTokenUrl(ctx)) {
         await next();
     } else {
-        await verifyAccessToken(ctx);
-        returnNewToken(ctx);
-        await next();
+        try {
+            await verifyAccessToken(ctx);
+            returnNewToken(ctx);
+            await next();
+        } catch (err) {
+            ctx.status = 401;
+            ctx.body = {
+                errMsg: err.errMsg
+            }
+        } 
     }
 }
