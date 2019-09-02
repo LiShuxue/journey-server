@@ -1,7 +1,7 @@
 {
   "apps": [{
     "name": "journey-server",
-    "script": "./server.js",
+    "script": "./dist/server.js",
     "env_dev": {
       "NODE_ENV": "development"
     },

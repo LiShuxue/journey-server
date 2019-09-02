@@ -1,9 +1,10 @@
-const qiniu = require('../utils/qiniuUtil');
-const sentry = require('../utils/sentry');
+import qiniu from '../utils/qiniuUtil';
+import sentry from '../utils/sentry';
+import { Context } from 'koa';
 
-const getQiniuUploadToken = async (ctx, next) => {
+const getQiniuUploadToken = async ( ctx: Context ): Promise<any> => {
   sentry.addBreadcrumb('controllers/qiniuController.js --> getQiniuUploadToken');
-  let token = qiniu.uploadToken();
+  let token: string = qiniu.uploadToken();
   ctx.status = 200;
   ctx.body = {
     successMsg: '获取七牛uploadToken成功！',
@@ -11,12 +12,11 @@ const getQiniuUploadToken = async (ctx, next) => {
     uploadDomain: qiniu.uploadDomain,
     downloadDomain: qiniu.downloadDomain
   }
-  await next();
 }
 
-const deleteFile = async (ctx, next) => {
+const deleteFile = async ( ctx: Context ): Promise<any> => {
   sentry.addBreadcrumb('controllers/qiniuController.js --> deleteFile');
-  let filename = ctx.request.body.filename;
+  let filename: string = ctx.request.body.filename;
   try {
     let result = await qiniu.deleteFileFromQiniu(filename);
     ctx.status = 200;
@@ -32,10 +32,9 @@ const deleteFile = async (ctx, next) => {
         err
     }
   }
-  await next();
 }
 
-module.exports = {
+export default {
   getQiniuUploadToken,
   deleteFile
 }

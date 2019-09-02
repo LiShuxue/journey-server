@@ -1,9 +1,10 @@
-const BlogModel = require('../models/Blog');
-const sentry = require('../utils/sentry');
+import BlogModel, { IBlog } from '../models/Blog';
+import sentry from '../utils/sentry';
+import { Context } from 'koa';
 
-const publishNewBlog = async ( ctx, next ) => {
+const publishNewBlog = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/blogController.js --> publishNewBlog');
-    let blog = ctx.request.body.blog;
+    let blog: IBlog = ctx.request.body.blog;
     blog.publishTime = Date.now();
     blog.updateTime = Date.now();
     blog.see = 0;
@@ -26,14 +27,12 @@ const publishNewBlog = async ( ctx, next ) => {
             err
         }
     }
-
-    await next();
 }
 
-const getAllBlog = async (ctx) => {
+const getAllBlog = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/blogController.js --> getAllBlog');
     try {
-        let blogList = await BlogModel.getAllBlog();
+        let blogList: IBlog[] = await BlogModel.getAllBlog();
         ctx.status = 200;
         ctx.body = {
             successMsg: '获取博客列表成功!',
@@ -49,10 +48,10 @@ const getAllBlog = async (ctx) => {
     }
 }
 
-const deleteBlog = async (ctx, next) => {
+const deleteBlog = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/blogController.js --> deleteBlog');
     try {
-        let ids = ctx.request.body.ids;
+        let ids: string[] = ctx.request.body.ids;
         await BlogModel.deleteAllBlog(ids);
         
         ctx.status = 200;
@@ -67,12 +66,12 @@ const deleteBlog = async (ctx, next) => {
             err
         }
     }
-    await next();
 }
-const updateBlog = async (ctx, next) => {
+
+const updateBlog = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/blogController.js --> updateBlog');
     try {
-        let blog = ctx.request.body.blog;
+        let blog: IBlog = ctx.request.body.blog;
         blog.image = Object.assign({name: '', url: ''}, blog.image)
         await BlogModel.updateBlog(blog._id, blog);
         ctx.status = 200;
@@ -87,10 +86,9 @@ const updateBlog = async (ctx, next) => {
             err
         }
     }
-    await next();
 }
 
-module.exports = {
+export default {
     publishNewBlog,
     getAllBlog,
     deleteBlog,

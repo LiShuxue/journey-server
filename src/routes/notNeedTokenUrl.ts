@@ -1,0 +1,16 @@
+import { Context } from 'koa';
+
+let login: string = '/blog-api/admin/login';
+let register: string = '/blog-api/admin/register';
+let categoryList: string = '/blog-api/blog/category/list';
+let blogList: string = '/blog-api/blog/list';
+
+let notNeedTokenUrlList: string[] = [login, register, categoryList, blogList];
+
+export function handleNotNeedTokenUrl(ctx: Context): boolean {
+  let url: string = ctx.url;
+  
+  return notNeedTokenUrlList.some((value) => {
+    return url.includes(value);
+  });
+}
