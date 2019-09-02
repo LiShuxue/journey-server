@@ -10,11 +10,15 @@ const app: Koa = new Koa();
 db.dbStart();
 
 app.use(cors({
-  origin: () => {
+  origin: (req) => {
     if(process.env.NODE_ENV !== 'production'){
       return '*';
     }else{
-      return 'http://lishuxue.site, http://www.lishuxue.site';
+      if (req.origin === 'http://lishuxue.site') {
+        return 'http://lishuxue.site';
+      } else if (req.origin === 'http://www.lishuxue.site') {
+        return 'http://www.lishuxue.site';
+      }
     }
   },
   maxAge: 5,
