@@ -1,20 +1,24 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema, Document, Model, model } from 'mongoose';
 
-const userSchema = new Schema({
+export interface IUser extends Document {
+    username: string,
+    password: string
+}
+
+const userSchema: Schema = new Schema({
     username: { unique: true, type: String },
     password: { type: String }
 },{
     collection: 'User' // 加上这个就不会在程序中定义的是User而真实数据库中变成了Users
 });
 
-const User = mongoose.model('User', userSchema);
+const User: Model<IUser, {}> = model<IUser>('User', userSchema);
 
-const createUser = (user) => {
+const createUser = (user: IUser): Promise<IUser> => {
     return User.create(user);
 }
 
-const getUser = (username) => {
+const getUser = (username: string): Promise<IUser> => {
     return new Promise((resolve, reject)=>{
         User.findOne({ username }, (err, doc)=>{
             if(err){
@@ -25,7 +29,7 @@ const getUser = (username) => {
     })
 }
 
-const getUserList = () => {
+const getUserList = (): Promise<IUser[]> => {
     return new Promise((resolve, reject)=>{
         User.find({}, (err, doc)=>{
             if(err) reject(err);
@@ -34,7 +38,7 @@ const getUserList = () => {
     })
 }
 
-const updateUser = (id, user) => {
+const updateUser = (id: string, user: IUser): Promise<IUser> => {
     return new Promise((resolve, reject)=>{
         User.updateOne({ 
             _id: id
@@ -50,7 +54,7 @@ const updateUser = (id, user) => {
     })
 }
 
-const deleteUser = (id) => {
+const deleteUser = (id: string): Promise<any> => {
     return new Promise((resolve, reject)=>{
         User.deleteOne({
             _id: id
@@ -61,14 +65,14 @@ const deleteUser = (id) => {
     })
 }
 
-const deleteAllUser = (ids) => {
+const deleteAllUser = (ids: string[]): Promise<any> => {
     let promiseArr = ids.map(id => {
         return deleteUser(id)
     });
     return Promise.all(promiseArr);
 }
 
-module.exports = {
+export default {
     createUser,
     getUser,
     getUserList,

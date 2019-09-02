@@ -5,9 +5,12 @@
 yarn
 ```
 
-### Run for development
+## Build typescript to javascript
 ```
-yarn ws-start
+yarn build
 ```
 
-### Compiles for production
+## Run in local
+```
+yarn dev
+```
