@@ -16,8 +16,8 @@ const secret: string = 'secret-key';
 
 const initPayload: Payload = {
     iss: "Journey", //(Issuer) jwt签发者
-    sub: "www.lishuxue.site", //(Subject) 该jwt所面向的用户
-    aud: "www.lishuxue.site" //(Audience) 接收jwt的一方
+    sub: "lishuxue.site", //(Subject) 该jwt所面向的用户
+    aud: "lishuxue.site" //(Audience) 接收jwt的一方
 };
 
 export function createAccessToken(payload: Payload): string {

@@ -14,11 +14,7 @@ app.use(cors({
     if(process.env.NODE_ENV !== 'production'){
       return '*';
     }else{
-      if (req.origin === 'http://lishuxue.site') {
-        return 'http://lishuxue.site';
-      } else if (req.origin === 'http://www.lishuxue.site') {
-        return 'http://www.lishuxue.site';
-      }
+      return 'http://lishuxue.site';
     }
   },
   maxAge: 5,
