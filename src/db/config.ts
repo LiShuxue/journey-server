@@ -1,13 +1,17 @@
 interface DBConfig {
-  name: string,
+  db: string,
   host: string,
-  port: number
+  port: number,
+  username: string,
+  password: string
 };
 
 const db_config: DBConfig = { 
-  name: 'journey', 
+  db: 'journey', 
   host: 'localhost',
-  port: 27017
+  port: 27017,
+  username: 'journey',
+  password: 'journey'
 };
 
 export default db_config

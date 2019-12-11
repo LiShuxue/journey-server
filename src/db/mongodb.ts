@@ -1,7 +1,8 @@
 import db_config from './config';
 const mongoose = require('mongoose');
 
-const db_path: string = 'mongodb://' + db_config.host + ':' + db_config.port + '/' + db_config.name;
+// 'mongodb://journey:journey@localhost:27017/journey'
+const db_path: string = `mongodb://${db_config.username}:${db_config.password}@${db_config.host}:${db_config.port}/${db_config.db}`
 const db = mongoose.connection;
 
 let maxConnectTimes: number = 0;
