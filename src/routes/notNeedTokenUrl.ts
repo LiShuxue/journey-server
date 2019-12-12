@@ -4,8 +4,9 @@ let login: string = '/blog-api/admin/login';
 let register: string = '/blog-api/admin/register';
 let categoryList: string = '/blog-api/blog/category/list';
 let blogList: string = '/blog-api/blog/list';
+let blogDetail: string = '/blog-api/blog/detail?id=';
 
-let notNeedTokenUrlList: string[] = [login, register, categoryList, blogList];
+let notNeedTokenUrlList: string[] = [login, register, categoryList, blogList, blogDetail];
 
 export function handleNotNeedTokenUrl(ctx: Context): boolean {
   let url: string = ctx.url;

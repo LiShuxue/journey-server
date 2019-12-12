@@ -1,4 +1,4 @@
-import BlogModel, { IBlog } from '../models/Blog';
+import BlogModel, { IBlog, ISimpleBlog } from '../models/Blog';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
 
@@ -32,7 +32,7 @@ const publishNewBlog = async ( ctx: Context ): Promise<any> => {
 const getAllBlog = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/blogController.js --> getAllBlog');
     try {
-        let blogList: IBlog[] = await BlogModel.getAllBlog();
+        let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
         ctx.status = 200;
         ctx.body = {
             successMsg: '获取博客列表成功!',
@@ -43,6 +43,26 @@ const getAllBlog = async ( ctx: Context ): Promise<any> => {
         ctx.status = 500;
         ctx.body = {
             errMsg: '获取博客列表失败!',
+            err
+        }
+    }
+}
+
+const getBlogDetailById = async ( ctx: Context ): Promise<any> => {
+    sentry.addBreadcrumb('controllers/blogController.js --> getBlogDetailById');
+    try {
+        let id: string = ctx.request.query.id;
+        let blog: IBlog = await BlogModel.getBlogDetailById(id);
+        ctx.status = 200;
+        ctx.body = {
+            successMsg: '获取博客详细信息成功!',
+            blog
+        }
+    } catch (err) {
+        sentry.captureException(err);
+        ctx.status = 500;
+        ctx.body = {
+            errMsg: '获取博客详细信息失败!',
             err
         }
     }
@@ -92,5 +112,6 @@ export default {
     publishNewBlog,
     getAllBlog,
     deleteBlog,
-    updateBlog
+    updateBlog,
+    getBlogDetailById
 };

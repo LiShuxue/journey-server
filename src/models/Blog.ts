@@ -29,6 +29,20 @@ export interface IBlog extends Document {
     comments: IComment[]
 }
 
+export interface ISimpleBlog extends Document {
+    title: string,
+    subTitle: string,
+    image: IImage,
+    isOriginal: boolean,
+    publishTime: number,
+    updateTime: number,
+    see: number,
+    like: number,
+    category: string,
+    tags: ITag,
+    comments: IComment[]
+}
+
 const blogSchema: Schema = new Schema({
     title: String,
     subTitle: String,
@@ -57,13 +71,29 @@ const publishBlog = (blog: IBlog): Promise<IBlog> => {
     return Blog.create(blog);
 }
 
-const getAllBlog = (): Promise<IBlog[]> => {
+/**
+ * Modal.find(filter, projection, callback)
+ * projection以文档的形式列举结果集中要包含或者排除的字段。
+ * 可以指定要包含的字段,例如:｛field: 1｝,或者指定要排除的字段,例如:｛field：0｝
+ * 
+ * 返回bolg集合，但是排除 'htmlContent' 和 'markdownContent' 字段
+ */
+const getAllBlog = (): Promise<ISimpleBlog[]> => {
     return new Promise((resolve, reject)=>{
-        Blog.find({}, (err,doc)=>{
+        Blog.find({}, { htmlContent: 0, markdownContent: 0 }, (err,doc)=>{
             if(err) reject(err);
             resolve(doc);
         });
     })
+}
+
+const getBlogDetailById = (id: string): Promise<IBlog> => {
+    return new Promise((resolve, reject) => {
+        Blog.findById(id, (err, doc) => {
+            if (err) reject(err)
+            resolve(doc)
+        })
+    });
 }
 
 const updateBlog = (id: string, blog: IBlog): Promise<IBlog> => {
@@ -112,5 +142,6 @@ export default {
     publishBlog,
     getAllBlog,
     updateBlog,
-    deleteAllBlog
+    deleteAllBlog,
+    getBlogDetailById
 }
