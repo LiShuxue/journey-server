@@ -53,7 +53,7 @@ const getBlogDetailById = async ( ctx: Context ): Promise<any> => {
     try {
         let id: string = ctx.request.query.id;
         let blog: IBlog = await BlogModel.getBlogDetailById(id);
-        blog = await BlogModel.updateSeeAccount(blog);
+        await BlogModel.updateSeeAccount(blog);
         ctx.status = 200;
         ctx.body = {
             successMsg: '获取博客详细信息成功!',
