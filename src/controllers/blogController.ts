@@ -109,10 +109,50 @@ const updateBlog = async ( ctx: Context ): Promise<any> => {
     }
 }
 
+const updateLikeAccount = async ( ctx: Context ): Promise<any> => {
+    sentry.addBreadcrumb('controllers/blogController.js --> updateLikeAccount');
+
+    let successMsg = '';
+    let errMsg = '';
+    try {
+        let id: string = ctx.request.body.id;
+        let isLiked: boolean = ctx.request.body.isLiked;
+        let blog: IBlog = await BlogModel.getBlogDetailById(id);
+
+        let newLikeAccount = blog.like;
+        if (isLiked) {
+            newLikeAccount = blog.like + 1;
+            successMsg = '点赞成功!';
+            errMsg = '点赞失败!';
+        } else {
+            if (newLikeAccount >= 1) {
+                newLikeAccount = blog.like - 1;
+            }
+            successMsg = '取消点赞成功!';
+            errMsg = '取消点赞失败!';
+        }
+
+        await BlogModel.updateLikeAccount(blog, newLikeAccount);
+
+        ctx.status = 200;
+        ctx.body = {
+            successMsg
+        }
+    } catch (err) {
+        sentry.captureException(err);
+        ctx.status = 500;
+        ctx.body = {
+            errMsg,
+            err
+        }
+    }
+}
+
 export default {
     publishNewBlog,
     getAllBlog,
     deleteBlog,
     updateBlog,
-    getBlogDetailById
+    getBlogDetailById,
+    updateLikeAccount
 };

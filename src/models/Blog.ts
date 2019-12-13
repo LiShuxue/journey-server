@@ -107,6 +107,17 @@ const updateSeeAccount = (blog: IBlog): Promise<IBlog> => {
     })
 }
 
+const updateLikeAccount = (blog: IBlog, like: number): Promise<IBlog> => {
+    return new Promise((resolve, reject) => {
+        Blog.updateOne({ _id: blog.id }, {
+            $set: { like: like }
+        }, (err, doc) => {
+            if (err) reject(err)
+            resolve(doc)
+        })
+    })
+}
+
 const updateBlog = (id: string, blog: IBlog): Promise<IBlog> => {
     return new Promise((resolve, reject)=>{
         Blog.updateOne({ 
@@ -155,5 +166,6 @@ export default {
     updateBlog,
     deleteAllBlog,
     getBlogDetailById,
-    updateSeeAccount
+    updateSeeAccount,
+    updateLikeAccount
 }

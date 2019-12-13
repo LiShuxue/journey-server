@@ -8,5 +8,6 @@ blogRoute.get('/list', BlogController.getAllBlog);
 blogRoute.get('/detail', BlogController.getBlogDetailById);
 blogRoute.post('/delete', BlogController.deleteBlog);
 blogRoute.post('/update', BlogController.updateBlog);
+blogRoute.post('/like', BlogController.updateLikeAccount);
 
 export default blogRoute;
