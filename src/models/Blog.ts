@@ -96,6 +96,17 @@ const getBlogDetailById = (id: string): Promise<IBlog> => {
     });
 }
 
+const updateSeeAccount = (blog: IBlog): Promise<IBlog> => {
+    return new Promise((resolve, reject) => {
+        Blog.updateOne({ _id: blog.id }, {
+            $set: { see: blog.see + 1 }
+        }, (err, doc) => {
+            if (err) reject(err)
+            resolve(doc)
+        })
+    })
+}
+
 const updateBlog = (id: string, blog: IBlog): Promise<IBlog> => {
     return new Promise((resolve, reject)=>{
         Blog.updateOne({ 
@@ -143,5 +154,6 @@ export default {
     getAllBlog,
     updateBlog,
     deleteAllBlog,
-    getBlogDetailById
+    getBlogDetailById,
+    updateSeeAccount
 }
