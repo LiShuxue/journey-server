@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { createAccessToken, createRefreshToken } from '../middleware/tokenMiddleware';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
-import { Model } from 'mongoose';
 
 const secret = 'secret-key';
 
@@ -59,12 +58,11 @@ const register = async ( ctx: Context ): Promise<any> => {
         .update(ctx.request.body.password)
         .digest('hex');
 
-    let user: IUser = new Model({
-        username: username,
-        password: hashPass
-    });
-
     try {
+        let user: IUser = new UserModel.User({
+            username: username,
+            password: hashPass
+        });
         let result: IUser = await UserModel.createUser(user);
         ctx.status = 200;
         ctx.body = {
