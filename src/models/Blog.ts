@@ -83,7 +83,7 @@ const getAllBlog = (): Promise<ISimpleBlog[]> => {
         Blog.find({}, { htmlContent: 0, markdownContent: 0 }, (err,doc)=>{
             if(err) reject(err);
             resolve(doc);
-        });
+        }).sort({publishTime: -1});
     })
 }
 
