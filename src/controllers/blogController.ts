@@ -35,7 +35,6 @@ const getAllBlog = async ( ctx: Context ): Promise<any> => {
         let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
         ctx.status = 200;
         ctx.body = {
-            successMsg: '获取博客列表成功!',
             blogList
         }
     } catch (err) {
@@ -56,7 +55,6 @@ const getBlogDetailById = async ( ctx: Context ): Promise<any> => {
         await BlogModel.updateSeeAccount(blog);
         ctx.status = 200;
         ctx.body = {
-            successMsg: '获取博客详细信息成功!',
             blog
         }
     } catch (err) {
@@ -112,7 +110,6 @@ const updateBlog = async ( ctx: Context ): Promise<any> => {
 const updateLikeAccount = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/blogController.js --> updateLikeAccount');
 
-    let successMsg = '';
     let errMsg = '';
     try {
         let id: string = ctx.request.body.id;
@@ -122,22 +119,18 @@ const updateLikeAccount = async ( ctx: Context ): Promise<any> => {
         let newLikeAccount = blog.like;
         if (isLiked) {
             newLikeAccount = blog.like + 1;
-            successMsg = '点赞成功!';
             errMsg = '点赞失败!';
         } else {
             if (newLikeAccount >= 1) {
                 newLikeAccount = blog.like - 1;
             }
-            successMsg = '取消点赞成功!';
             errMsg = '取消点赞失败!';
         }
 
         await BlogModel.updateLikeAccount(blog, newLikeAccount);
 
         ctx.status = 200;
-        ctx.body = {
-            successMsg
-        }
+        ctx.body = {}
     } catch (err) {
         sentry.captureException(err);
         ctx.status = 500;
