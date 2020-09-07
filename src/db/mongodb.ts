@@ -23,6 +23,7 @@ db.once('open', ()=>{
 });
 
 const dbStart = function(): void {
+  mongoose.set('useCreateIndex', true);
   mongoose.connect(db_path);
 }
 
