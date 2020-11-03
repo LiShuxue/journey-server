@@ -263,6 +263,30 @@ const deleteComments = async ( ctx: Context ): Promise<any> => {
     }
 }
 
+const updateBlogTime = async ( ctx: Context ): Promise<any> => {
+    sentry.addBreadcrumb('controllers/blogController.js --> updateBlogTime');
+    try {
+        let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
+        let promistList: Promise<any>[] = [];
+        blogList.forEach(item => {
+            promistList.push(BlogModel.updateBlogTime(item._id, item))
+        })
+        await Promise.all(promistList);
+        let newBlogList: ISimpleBlog[] = await BlogModel.getAllBlog();
+        ctx.status = 200;
+        ctx.body = {
+            newBlogList
+        }
+    } catch (err) {
+        sentry.captureException(err);
+        ctx.status = 500;
+        ctx.body = {
+            errMsg: '获取博客列表失败!',
+            err
+        }
+    }
+}
+
 export default {
     publishNewBlog,
     getAllBlog,
@@ -272,5 +296,6 @@ export default {
     updateLikeAccount,
     addComments,
     hideComments,
-    deleteComments
+    deleteComments,
+    updateBlogTime
 };
