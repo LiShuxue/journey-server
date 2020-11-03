@@ -62,8 +62,8 @@ const blogSchema: Schema = new Schema({
         url: String
     },
     isOriginal: Boolean,
-    publishTime: Date,
-    updateTime: Date,
+    publishTime: Number,
+    updateTime: Number,
     see: Number,
     like: Number,
     category: String,
