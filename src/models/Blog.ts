@@ -179,22 +179,6 @@ const deleteAllBlog = (ids: string[]): Promise<any> => {
     return Promise.all(promiseArr);
 }
 
-const updateBlogTime = (id: string, blog: IBlog | ISimpleBlog): Promise<IBlog> => {
-    return new Promise((resolve, reject)=>{
-        Blog.updateOne({ 
-            _id: id
-        }, {
-            $set: {
-                publishTime: new Date(blog.publishTime).getTime(),
-                updateTime: new Date(blog.updateTime).getTime()
-            }
-        }, (err, doc)=>{
-            if(err) reject(err);
-            resolve(doc);
-        });
-    })
-}
-
 
 export default {
     publishBlog,
@@ -204,6 +188,5 @@ export default {
     getBlogDetailById,
     updateSeeAccount,
     updateLikeAccount,
-    updateComments,
-    updateBlogTime
+    updateComments
 }
