@@ -16,8 +16,8 @@ const getQiniuUploadToken = async ( ctx: Context ): Promise<any> => {
 
 const deleteFile = async ( ctx: Context ): Promise<any> => {
   sentry.addBreadcrumb('controllers/qiniuController.js --> deleteFile');
-  let filename: string = ctx.request.body.filename;
   try {
+    let filename: string = ctx.request.body.filename;
     let result = await qiniu.deleteFileFromQiniu(filename);
     ctx.status = 200;
     ctx.body = { 

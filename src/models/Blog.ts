@@ -7,10 +7,20 @@ interface IImage {
 interface ITag {
     [index: number]: string
 }
-interface IComment {
+
+export interface IReply extends IComment {
+    parentId: string,
+    replyName: string,
+}
+
+export interface IComment {
+    id: string,
     arthur: string,
-    date: Date,
-    content: string
+    date: number,
+    content: string,
+    email: string,
+    reply: IReply[],
+    isHide: boolean
 }
 
 export interface IBlog extends Document {
@@ -39,8 +49,7 @@ export interface ISimpleBlog extends Document {
     see: number,
     like: number,
     category: string,
-    tags: ITag,
-    comments: IComment[]
+    tags: ITag
 }
 
 const blogSchema: Schema = new Schema({
@@ -76,11 +85,11 @@ const publishBlog = (blog: IBlog): Promise<IBlog> => {
  * projection以文档的形式列举结果集中要包含或者排除的字段。
  * 可以指定要包含的字段,例如:｛field: 1｝,或者指定要排除的字段,例如:｛field：0｝
  * 
- * 返回bolg集合，但是排除 'htmlContent' 和 'markdownContent' 字段
+ * 返回bolg集合，但是排除 'htmlContent' 'comments' 和 'markdownContent' 字段
  */
 const getAllBlog = (): Promise<ISimpleBlog[]> => {
     return new Promise((resolve, reject)=>{
-        Blog.find({}, { htmlContent: 0, markdownContent: 0 }, (err,doc)=>{
+        Blog.find({}, { htmlContent: 0, markdownContent: 0, comments: 0 }, (err,doc)=>{
             if(err) reject(err);
             resolve(doc);
         }).sort({publishTime: -1});
@@ -111,6 +120,17 @@ const updateLikeAccount = (blog: IBlog, like: number): Promise<IBlog> => {
     return new Promise((resolve, reject) => {
         Blog.updateOne({ _id: blog.id }, {
             $set: { like: like }
+        }, (err, doc) => {
+            if (err) reject(err)
+            resolve(doc)
+        })
+    })
+}
+
+const updateComments = (blog: IBlog, comments: IComment[]): Promise<IBlog> => {
+    return new Promise((resolve, reject) => {
+        Blog.updateOne({ _id: blog.id }, {
+            $set: { comments: comments }
         }, (err, doc) => {
             if (err) reject(err)
             resolve(doc)
@@ -167,5 +187,6 @@ export default {
     deleteAllBlog,
     getBlogDetailById,
     updateSeeAccount,
-    updateLikeAccount
+    updateLikeAccount,
+    updateComments
 }

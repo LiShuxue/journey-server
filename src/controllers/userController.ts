@@ -8,12 +8,13 @@ const secret = 'secret-key';
 
 const login = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> login');
-    let username: string = ctx.request.body.username;
-    let hashPass: string = crypto.createHmac('sha256', secret)
-        .update(ctx.request.body.password)
-        .digest('hex');
-
+    
     try{
+        let username: string = ctx.request.body.username;
+        let hashPass: string = crypto.createHmac('sha256', secret)
+            .update(ctx.request.body.password)
+            .digest('hex');
+
         let doc: IUser = await UserModel.getUser(username);
 
         if(!doc) {
@@ -53,12 +54,12 @@ const login = async ( ctx: Context ): Promise<any> => {
 
 const register = async ( ctx: Context ): Promise<any> => {
     sentry.addBreadcrumb('controllers/userController.js --> register');
-    let username: string = ctx.request.body.username;
-    let hashPass: string = crypto.createHmac('sha256', secret)
-        .update(ctx.request.body.password)
-        .digest('hex');
-
     try {
+        let username: string = ctx.request.body.username;
+        let hashPass: string = crypto.createHmac('sha256', secret)
+            .update(ctx.request.body.password)
+            .digest('hex');
+
         let user: IUser = new UserModel.User({
             username: username,
             password: hashPass
