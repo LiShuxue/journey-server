@@ -263,6 +263,31 @@ const deleteComments = async ( ctx: Context ): Promise<any> => {
     }
 }
 
+const updateAllImage = async ( ctx: Context ): Promise<any> => {
+    try {
+        let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
+        let blog: ISimpleBlog = ctx.request.body.blog;
+        let arr: any = [];
+        blogList.forEach(item => {
+            let blog: ISimpleBlog = item;
+            blog.image.url = blog.image.url.replace('http://', 'https://');
+            arr.push(BlogModel.updateBlogImage(blog._id, blog))
+        });
+        
+        await Promise.all(arr);
+
+        ctx.status = 200;
+        ctx.body = {
+            blogList
+        }
+    } catch (err) {
+        ctx.status = 500;
+        ctx.body = {
+            err
+        }
+    }
+}
+
 export default {
     publishNewBlog,
     getAllBlog,
@@ -272,5 +297,6 @@ export default {
     updateLikeAccount,
     addComments,
     hideComments,
-    deleteComments
+    deleteComments,
+    updateAllImage
 };

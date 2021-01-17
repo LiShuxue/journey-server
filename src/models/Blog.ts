@@ -161,6 +161,21 @@ const updateBlog = (id: string, blog: IBlog): Promise<IBlog> => {
     })
 }
 
+const updateBlogImage = (id: string, blog: ISimpleBlog): Promise<IBlog> => {
+    return new Promise((resolve, reject)=>{
+        Blog.updateOne({ 
+            _id: id
+        }, {
+            $set: {
+                image: blog.image,
+            }
+        }, (err, doc)=>{
+            if(err) reject(err);
+            resolve(doc);
+        });
+    })
+}
+
 const deleteBlog = (id: string): Promise<any> => {
     return new Promise((resolve, reject)=>{
         Blog.deleteOne({
@@ -188,5 +203,6 @@ export default {
     getBlogDetailById,
     updateSeeAccount,
     updateLikeAccount,
-    updateComments
+    updateComments,
+    updateBlogImage
 }
