@@ -12,6 +12,5 @@ blogRoute.post('/like', BlogController.updateLikeAccount);
 blogRoute.post('/comment/add', BlogController.addComments);
 blogRoute.post('/comment/hide', BlogController.hideComments);
 blogRoute.post('/comment/delete', BlogController.deleteComments);
-blogRoute.get('/updateimage', BlogController.updateAllImage);
 
 export default blogRoute;
