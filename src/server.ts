@@ -9,19 +9,21 @@ import { tokenMiddleware } from './middleware/tokenMiddleware';
 const app: Koa = new Koa();
 db.dbStart();
 
-app.use(cors({
-  origin: (req) => {
-    if(process.env.NODE_ENV !== 'production'){
-      return '*';
-    }else{
-      return 'https://lishuxue.site';
-    }
-  },
-  maxAge: 5,
-  allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],
-  exposeHeaders: ['new-access-token', 'new-refresh-token']
-}));
+app.use(
+  cors({
+    origin: () => {
+      if (process.env.NODE_ENV !== 'production') {
+        return '*';
+      } else {
+        return 'https://lishuxue.site';
+      }
+    },
+    maxAge: 5,
+    allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],
+    exposeHeaders: ['new-access-token', 'new-refresh-token']
+  })
+);
 
 // bodyparser:该中间件用于处理post请求的数据
 app.use(bodyParser());
@@ -37,5 +39,5 @@ app.on('error', (err: never) => {
 });
 
 app.listen(4000, () => {
-  console.log('server starting...')
+  console.log('server starting...');
 });

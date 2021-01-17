@@ -12,8 +12,8 @@ let notNeedTokenUrlList: string[] = [login, register, categoryList, blogList, bl
 
 export function handleNotNeedTokenUrl(ctx: Context): boolean {
   let url: string = ctx.url;
-  
-  return notNeedTokenUrlList.some((value) => {
+
+  return notNeedTokenUrlList.some(value => {
     return url.includes(value);
   });
 }

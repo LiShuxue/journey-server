@@ -3,7 +3,7 @@ import qiniu from 'qiniu';
 const accessKey: string = 'uHIW2IbsCKWoeaEW3x5tX6ajX3xL010MmmWar5vC';
 const secretKey: string = 'BJzBW7iaoRMh370HdlWSI4gzjL9tbkn-J19uzedC';
 const bucket: string = 'journey';
-const uploadDomain: string = 'https://upload-z1.qiniup.com/'; 
+const uploadDomain: string = 'https://upload-z1.qiniup.com/';
 const downloadDomain: string = 'https://cdn.lishuxue.site/';
 
 // 鉴权对象
@@ -19,7 +19,7 @@ const uploadToken = function(): string {
   };
   let putPolicy = new qiniu.rs.PutPolicy(options);
   return putPolicy.uploadToken(mac);
-}
+};
 
 // 从七牛云删除文件
 const deleteFileFromQiniu = function(key: string): Promise<any> {
@@ -27,18 +27,18 @@ const deleteFileFromQiniu = function(key: string): Promise<any> {
     bucketManager.delete(bucket, key, (err: Error, respBody: any, respInfo: any) => {
       if (err) {
         reject(err);
-      } 
+      }
       resolve({
         respInfo,
         respBody
-      })
+      });
     });
   });
-}
+};
 
 export default {
   uploadToken,
   deleteFileFromQiniu,
   uploadDomain,
   downloadDomain
-}
+};

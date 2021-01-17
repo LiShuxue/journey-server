@@ -1,9 +1,12 @@
 const Sentry = require('@sentry/node');
 
 interface Scope {
-  setUser: <T>(arg: T) => void
-  setTag: <T, U>(arg1: T, arg2: U) => void
-  setExtra: <T, U>(arg1: T, arg2: U) => void
+  // eslint-disable-next-line
+  setUser: <T>(arg: T) => void;
+  // eslint-disable-next-line
+  setTag: <T, U>(arg1: T, arg2: U) => void;
+  // eslint-disable-next-line
+  setExtra: <T, U>(arg1: T, arg2: U) => void;
 }
 
 type LogLevel = 'fatal' | 'error' | 'warning' | 'info' | 'debug';
@@ -15,20 +18,20 @@ if (process.env.NODE_ENV === 'production') {
 const setUserContext = (context: any) => {
   Sentry.configureScope((scope: Scope) => {
     scope.setUser(context);
-  })
-}
+  });
+};
 
 const setTagContext = (key: string, value: string) => {
   Sentry.configureScope((scope: Scope) => {
     scope.setTag(key, value);
-  })
-}
+  });
+};
 
 const setExtraContext = (key: string, obj: any) => {
   Sentry.configureScope((scope: Scope) => {
     scope.setExtra(key, obj);
-  })
-}
+  });
+};
 
 const addBreadcrumb = (message: string, data?: any, category: string = 'breadcrumb', level: LogLevel = 'info') => {
   Sentry.addBreadcrumb({
@@ -37,15 +40,15 @@ const addBreadcrumb = (message: string, data?: any, category: string = 'breadcru
     category: category,
     level: level
   });
-}
+};
 
 const captureException = (error: any) => {
   error && Sentry.captureException(error);
-}
+};
 
 const captureMessage = (msg: string) => {
   msg && Sentry.captureMessage(msg);
-}
+};
 
 export default {
   setUserContext,
@@ -54,4 +57,4 @@ export default {
   addBreadcrumb,
   captureException,
   captureMessage
-}
+};
