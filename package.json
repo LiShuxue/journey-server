@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "mongod-mac": "mongod -f /Users/1536360/Documents/software/mongodb-macos-x86_64-4.4.1/config/mongod.conf",
+    "mongod-mac": "mongod -f /Users/lishuxue/Documents/software/mongodb-osx-x86_64-3.6.23/config/mongod.conf",
     "mongod-win": "mongod -f E:\\Front\\mongodb\\bin\\mongod.cfg --auth",
     "dev": "cross-env NODE_ENV=development nodemon --delay 3 --watch dist dist/server.js",
     "build": "tsc",

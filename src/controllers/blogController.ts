@@ -18,14 +18,14 @@ const publishNewBlog = async (ctx: Context): Promise<any> => {
     await BlogModel.publishBlog(blog);
     ctx.status = 200;
     ctx.body = {
-      successMsg: '文章发表成功!',
+      successMsg: '文章发表成功!'
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '发表文章失败!',
-      err,
+      err
     };
   }
 };
@@ -36,14 +36,14 @@ const getAllBlog = async (ctx: Context): Promise<any> => {
     let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
     ctx.status = 200;
     ctx.body = {
-      blogList,
+      blogList
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '获取博客列表失败!',
-      err,
+      err
     };
   }
 };
@@ -56,14 +56,14 @@ const getBlogDetailById = async (ctx: Context): Promise<any> => {
     await BlogModel.updateSeeAccount(blog);
     ctx.status = 200;
     ctx.body = {
-      blog,
+      blog
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '获取博客详细信息失败!',
-      err,
+      err
     };
   }
 };
@@ -76,14 +76,14 @@ const deleteBlog = async (ctx: Context): Promise<any> => {
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '删除博客成功!',
+      successMsg: '删除博客成功!'
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '删除博客失败!',
-      err,
+      err
     };
   }
 };
@@ -96,14 +96,14 @@ const updateBlog = async (ctx: Context): Promise<any> => {
     await BlogModel.updateBlog(blog._id, blog);
     ctx.status = 200;
     ctx.body = {
-      successMsg: '更新博客成功!',
+      successMsg: '更新博客成功!'
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '更新博客失败!',
-      err,
+      err
     };
   }
 };
@@ -137,7 +137,7 @@ const updateLikeAccount = async (ctx: Context): Promise<any> => {
     ctx.status = 500;
     ctx.body = {
       errMsg,
-      err,
+      err
     };
   }
 };
@@ -178,21 +178,22 @@ const addComments = async (ctx: Context): Promise<any> => {
       comment.parentId = parentId;
       originalComment.reply.push(comment as IReply);
     } else {
-      existingComments.push(comment as IComment);
+      // 放在数组开头
+      existingComments.unshift(comment as IComment);
     }
 
     await BlogModel.updateComments(blog, existingComments);
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '评论成功!',
+      successMsg: '评论成功!'
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '评论失败!',
-      err,
+      err
     };
   }
 };
@@ -212,14 +213,14 @@ const hideComments = async (ctx: Context): Promise<any> => {
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '隐藏成功!',
+      successMsg: '隐藏成功!'
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '隐藏失败!',
-      err,
+      err
     };
   }
 };
@@ -251,14 +252,14 @@ const deleteComments = async (ctx: Context): Promise<any> => {
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '删除成功!',
+      successMsg: '删除成功!'
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '删除失败!',
-      err,
+      err
     };
   }
 };
@@ -272,5 +273,5 @@ export default {
   updateLikeAccount,
   addComments,
   hideComments,
-  deleteComments,
+  deleteComments
 };
