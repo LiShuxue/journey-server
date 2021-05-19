@@ -11,6 +11,8 @@ interface ITag {
 export interface IReply extends IComment {
   parentId: string;
   replyName: string;
+  replyEmail: string;
+  replyContent: string;
 }
 
 export interface IComment {

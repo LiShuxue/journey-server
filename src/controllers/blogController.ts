@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import BlogModel, { IBlog, ISimpleBlog, IComment, IReply } from '../models/Blog';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
+import sendMailNotification from '../utils/email';
 
 const publishNewBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> publishNewBlog');
@@ -160,6 +161,8 @@ const addComments = async (ctx: Context): Promise<any> => {
   try {
     const blogId: string = ctx.request.body.blog_id;
     const replyName: string = ctx.request.body.replyName;
+    const replyEmail: string = ctx.request.body.replyEmail;
+    const replyContent: string = ctx.request.body.replyContent;
     const parentId: string = ctx.request.body.parent_id;
     const comment: any = ctx.request.body.comment;
     const random = crypto.randomBytes(16).toString('hex');
@@ -171,10 +174,12 @@ const addComments = async (ctx: Context): Promise<any> => {
     const blog: IBlog = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
-    // 如果有replyName， 说明是回复另一个评论， 而不是一个新的评论
-    if (replyName) {
+    // 如果有replyName，replyEmail, 说明是回复另一个评论， 而不是一个新的评论
+    if (replyName && replyEmail && replyContent) {
       const originalComment: IComment = findCommentById(existingComments, parentId);
       comment.replyName = replyName;
+      comment.replyEmail = replyEmail;
+      comment.replyContent = replyContent;
       comment.parentId = parentId;
       originalComment.reply.push(comment as IReply);
     } else {
@@ -183,6 +188,8 @@ const addComments = async (ctx: Context): Promise<any> => {
     }
 
     await BlogModel.updateComments(blog, existingComments);
+
+    sendMailNotification(blog, comment);
 
     ctx.status = 200;
     ctx.body = {
