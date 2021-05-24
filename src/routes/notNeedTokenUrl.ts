@@ -7,8 +7,18 @@ let blogList: string = '/blog-api/blog/list';
 let blogDetail: string = '/blog-api/blog/detail?id=';
 let likeBlog: string = '/blog-api/blog/like';
 let addComments: string = '/blog-api/blog/comment/add';
+let oneInfo: string = '/blog-api/common/oneinfo';
 
-let notNeedTokenUrlList: string[] = [login, register, categoryList, blogList, blogDetail, likeBlog, addComments];
+let notNeedTokenUrlList: string[] = [
+  login,
+  register,
+  categoryList,
+  blogList,
+  blogDetail,
+  likeBlog,
+  addComments,
+  oneInfo
+];
 
 export function handleNotNeedTokenUrl(ctx: Context): boolean {
   let url: string = ctx.url;
