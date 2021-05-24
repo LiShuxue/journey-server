@@ -1,14 +1,17 @@
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
 import loadWebPage from '../utils/loadWebPage';
+import axios from 'axios';
 
-const getOneInfo = async (ctx: Context): Promise<any> => {
-  sentry.addBreadcrumb('controllers/commonController.js --> getOneInfo');
+const getHomeInfo = async (ctx: Context): Promise<any> => {
+  sentry.addBreadcrumb('controllers/commonController.js --> getHomeInfo');
   try {
-    const result = await loadWebPage();
+    const one = await loadWebPage();
+    const wea = await axios.get('https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2');
     ctx.status = 200;
     ctx.body = {
-      result
+      one,
+      wea: wea.data
     };
   } catch (err) {
     sentry.captureException(err);
@@ -20,5 +23,5 @@ const getOneInfo = async (ctx: Context): Promise<any> => {
 };
 
 export default {
-  getOneInfo
+  getHomeInfo
 };
