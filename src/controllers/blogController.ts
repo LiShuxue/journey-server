@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import BlogModel, { IBlog, ISimpleBlog, IComment, IReply } from '../models/Blog';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
-import sendMailNotification from '../utils/email';
+import emailTool from '../utils/email';
 
 const publishNewBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> publishNewBlog');
@@ -189,7 +189,7 @@ const addComments = async (ctx: Context): Promise<any> => {
 
     await BlogModel.updateComments(blog, existingComments);
 
-    sendMailNotification(blog, comment);
+    emailTool.sendMailNotification(blog, comment);
 
     ctx.status = 200;
     ctx.body = {

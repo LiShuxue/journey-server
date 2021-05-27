@@ -5,6 +5,7 @@ import router from './routes';
 import cors from 'koa2-cors';
 import bodyParser from 'koa-bodyparser';
 import { tokenMiddleware } from './middleware/tokenMiddleware';
+import emailTool from './utils/email';
 
 const app: Koa = new Koa();
 db.dbStart();
@@ -41,3 +42,6 @@ app.on('error', (err: never) => {
 app.listen(4000, () => {
   console.log('server starting...');
 });
+
+// 定时发邮件
+emailTool.sendMailSchedule();
