@@ -59,13 +59,13 @@ const sendMailNotification = (blog: IBlog, comment: any) => {
   }
 };
 
-const sendWarm = async () => {
+const sendWarm = async (to: string, city: string) => {
   const one: any = await loadWebPage();
-  const wea: any = await axios.get('https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2');
+  const wea: any = await axios.get(`https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2&city=${city}`);
   const html = `
     <div class="one" style="margin: 0 auto; max-width: 720px;">
         <div class="others" style="background: #f8f8f8; color: #6d6d6d; padding: 15px 0; text-align: center;">
-            <div class="wea">今日天气：${wea.data.wea}</div>
+            <div class="wea">${city}今日天气：${wea.data.wea}</div>
             <div class="temp" style="font-size: 40px; margin: 20px 0 20px 0;">
               ${wea.data.tem}<span style="position: relative; top: -20px; font-size: 12px;">℃</span>
             </div>
@@ -85,7 +85,7 @@ const sendWarm = async () => {
     </div>
   `;
 
-  sendMail('1149926505@qq.com,1406798534@qq.com', html, '每日温暖');
+  sendMail(to, html, '每日温暖');
 };
 
 const sendMailSchedule = () => {
@@ -105,7 +105,8 @@ const sendMailSchedule = () => {
     hour: 10
   };
   schedule.scheduleJob(options, () => {
-    sendWarm();
+    sendWarm('1406798534@qq.com', '天津');
+    sendWarm('1149926505@qq.com', '北京');
   });
 };
 
