@@ -61,11 +61,12 @@ const sendMailNotification = (blog: IBlog, comment: any) => {
 
 const sendWarm = async (to: string, city: string) => {
   const one: any = await loadWebPage();
-  const wea: any = await axios.get(`https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2&city=${city}`);
+  const url = `https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2&city=${city}`;
+  const wea: any = await axios.get(encodeURI(url));
   const html = `
     <div class="one" style="margin: 0 auto; max-width: 720px;">
         <div class="others" style="background: #f8f8f8; color: #6d6d6d; padding: 15px 0; text-align: center;">
-            <div class="wea">${city}今日天气：${wea.data.wea}</div>
+            <div class="wea">${wea.data.city}今日天气：${wea.data.wea}</div>
             <div class="temp" style="font-size: 40px; margin: 20px 0 20px 0;">
               ${wea.data.tem}<span style="position: relative; top: -20px; font-size: 12px;">℃</span>
             </div>

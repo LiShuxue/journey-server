@@ -6,8 +6,10 @@ import axios from 'axios';
 const getHomeInfo = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/commonController.js --> getHomeInfo');
   try {
+    const city = ctx.request.query.city;
     const one = await loadWebPage();
-    const wea = await axios.get('https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2');
+    const url = `https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2&city=${city}`;
+    const wea = await axios.get(encodeURI(url));
     ctx.status = 200;
     ctx.body = {
       one,
