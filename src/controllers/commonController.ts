@@ -6,8 +6,13 @@ import axios from 'axios';
 const getHomeInfo = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/commonController.js --> getHomeInfo');
   try {
-    const city = ctx.request.query.city;
+    const ip = ctx.request.ip;
     const one = await loadWebPage();
+    // 腾讯位置服务，根据IP获取城市信息
+    const positionUrl = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=GWSBZ-HTTWJ-QJIF2-KLHLC-X3WKV-ZZFV6`;
+    const cityinfo = await axios.get(encodeURI(positionUrl));
+    const city = cityinfo.data.result ? cityinfo.data.result.ad_info.city.replace('市', '') : '北京';
+    // 根据城市获取天气预报信息
     const url = `https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2&city=${city}`;
     const wea = await axios.get(encodeURI(url));
     ctx.status = 200;
