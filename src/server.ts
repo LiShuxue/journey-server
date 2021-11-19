@@ -44,4 +44,4 @@ app.listen(4000, () => {
 });
 
 // 定时发邮件
-emailTool.sendMailSchedule();
+// emailTool.sendMailSchedule();
