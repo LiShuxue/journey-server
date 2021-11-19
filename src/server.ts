@@ -5,7 +5,7 @@ import router from './routes';
 import cors from 'koa2-cors';
 import bodyParser from 'koa-bodyparser';
 import { tokenMiddleware } from './middleware/tokenMiddleware';
-import emailTool from './utils/email';
+// import emailTool from './utils/email';
 
 const app: Koa = new Koa();
 db.dbStart();
