@@ -1,8 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { IBlog } from '../models/Blog';
 import sentry from './sentry';
-import loadWebPage from './loadWebPage';
-import axios from 'axios';
 import schedule from 'node-schedule';
 
 // 配置邮件客户端
@@ -59,36 +57,6 @@ const sendMailNotification = (blog: IBlog, comment: any) => {
   }
 };
 
-const sendWarm = async (to: string, city: string) => {
-  const one: any = await loadWebPage();
-  const url = `https://www.tianqiapi.com/free/day?appid=19838913&appsecret=dUknzCP2&city=${city}`;
-  const wea: any = await axios.get(encodeURI(url));
-  const html = `
-    <div class="one" style="margin: 0 auto; max-width: 720px;">
-        <div class="others" style="background: #f8f8f8; color: #6d6d6d; padding: 15px 0; text-align: center;">
-            <div class="wea">${wea.data.city}今日天气：${wea.data.wea}</div>
-            <div class="temp" style="font-size: 40px; margin: 20px 0 20px 0;">
-              ${wea.data.tem}<span style="position: relative; top: -20px; font-size: 12px;">℃</span>
-            </div>
-            <div class="win">${wea.data.win}： ${wea.data.win_speed}</div>
-        </div>
-        <div class="main">
-            <div class="image" style="max-width: 720px;">
-                <img src="${one.imageUrl}" style="width: 100%;" />
-            </div>
-            <div class="line" style="position: relative; top: -5px; height: 35px; background: #6d6d6d;"></div>
-            <div class="text"
-                style="position: relative; top: -5px; padding: 0 15px; height: 120px; background: #dadada; display: flex; justify-content: center; align-items: center;">
-                <span style="color: #6d6d6d; line-height: 1.5;">${one.text}</span>
-            </div>
-            <div class="line" style="position: relative; top: -5px; height: 35px; background: #6d6d6d;"></div>
-        </div>
-    </div>
-  `;
-
-  sendMail(to, html, '每日温暖');
-};
-
 const sendMailSchedule = () => {
   /**
    * 参数：
@@ -106,8 +74,7 @@ const sendMailSchedule = () => {
     hour: 10
   };
   schedule.scheduleJob(options, () => {
-    sendWarm('1406798534@qq.com', '天津');
-    sendWarm('1149926505@qq.com', '北京');
+    // to do
   });
 };
 
