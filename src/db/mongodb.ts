@@ -1,4 +1,5 @@
 import db_config from './config';
+import logger from '../utils/logger';
 const mongoose = require('mongoose');
 
 // 'mongodb://journey:journey@localhost:27017/journey'
@@ -7,19 +8,19 @@ const db = mongoose.connection;
 
 let maxConnectTimes: number = 0;
 db.on('error', () => {
-  console.log('DB connect failed...');
+  logger.info('DB connect failed...');
   if (maxConnectTimes < 5) {
     setTimeout(() => {
       maxConnectTimes++;
-      console.log('DB connect again...');
+      logger.info('DB connect again...');
       dbStart();
     }, 2000);
   } else {
-    console.log(`DB can't connect now becuase some reason...`);
+    logger.info(`DB can't connect now becuase some reason...`);
   }
 });
 db.once('open', () => {
-  console.log('DB connected...');
+  logger.info('DB connected...');
 });
 
 const dbStart = function(): void {

@@ -1,12 +1,20 @@
 {
-  "apps": [{
-    "name": "journey-server",
-    "script": "./dist/server.js",
-    "env_dev": {
-      "NODE_ENV": "development"
-    },
-    "env_prd": {
-      "NODE_ENV": "production"
+  "apps": [
+    {
+      "name": "journey-server",
+      "script": "./dist/server.js",
+      "exec_mode": "cluster",
+      "instances": 1,
+      "instance_var": "INSTANCE_ID",
+      "autorestart": true,
+      "watch": false,
+      "max_memory_restart": "500M",
+      "env_dev": {
+        "NODE_ENV": "development"
+      },
+      "env_prd": {
+        "NODE_ENV": "production"
+      }
     }
-  }]
+  ]
 }
