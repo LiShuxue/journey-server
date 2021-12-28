@@ -8,6 +8,8 @@ import { tokenMiddleware } from './middleware/tokenMiddleware';
 import logger from './utils/logger';
 
 const app: Koa = new Koa();
+app.proxy = true;
+
 db.dbStart();
 
 app.use(
