@@ -10,7 +10,6 @@ const getHomeInfo = async (ctx: Context): Promise<any> => {
   try {
     const ip = ctx.request.ip;
     logger.info('ip: ' + ip);
-    logger.info(ctx.request.ips);
     const one = await loadWebPage();
     // 腾讯位置服务，根据IP获取城市信息 https://lbs.qq.com/service/webService/webServiceGuide/webServiceIp
     const positionUrl = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=GWSBZ-HTTWJ-QJIF2-KLHLC-X3WKV-ZZFV6`;
