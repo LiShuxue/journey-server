@@ -3,6 +3,7 @@ import BlogModel, { IBlog, ISimpleBlog, IComment, IReply } from '../models/Blog'
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
 import emailTool from '../utils/email';
+import appConfig from '../config';
 
 const publishNewBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> publishNewBlog');
@@ -35,6 +36,14 @@ const getAllBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> getAllBlog');
   try {
     let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
+
+    // 面试中，将某些面试文章下线，不展示
+    if (appConfig.isInterview) {
+      blogList = blogList.filter(blog => {
+        return !appConfig.blackList.includes(blog.category);
+      });
+    }
+
     ctx.status = 200;
     ctx.body = {
       blogList
