@@ -1,5 +1,5 @@
 const appConfig: any = {
-  isInterview: true,
+  isInterview: false,
   blackList: ['面试']
 };
 
