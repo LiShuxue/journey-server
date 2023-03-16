@@ -4,7 +4,8 @@ import { Context } from 'koa';
 
 const getQiniuUploadToken = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/qiniuController.js --> getQiniuUploadToken');
-  let token: string = qiniu.uploadToken();
+  const key = ctx.request.query.key; // 如：blog/image/面试/xxx.png
+  let token: string = qiniu.uploadToken(key);
   ctx.status = 200;
   ctx.body = {
     successMsg: '获取七牛uploadToken成功！',

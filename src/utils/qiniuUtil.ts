@@ -12,10 +12,10 @@ const config = new qiniu.conf.Config();
 const bucketManager = new qiniu.rs.BucketManager(mac, config);
 
 // 上传凭证
-const uploadToken = function(): string {
+const uploadToken = function(keyToOverwrite: string): string {
   let options = {
-    scope: bucket, // 存储空间的Bucket名字
-    expires: 2 * 60 * 60 // 上传凭证的过期时间，单位s
+    scope: bucket + ':' + keyToOverwrite, // 存储空间的Bucket名字+需要覆盖上传的文件
+    expires: 1 * 60 // 上传凭证的过期时间，单位s
   };
   let putPolicy = new qiniu.rs.PutPolicy(options);
   return putPolicy.uploadToken(mac);
