@@ -10,7 +10,7 @@ const db_config: DBConfig = {
   db: 'journey',
   host: 'localhost',
   port: 27017,
-  username: 'journey',
+  username: 'journey', // admin db: lishuxue/lishuxue
   password: 'journey'
 };
 
