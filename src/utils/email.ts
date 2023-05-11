@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   port: 465, // 默认情况下为587，如果设置secure为true时则默认为465
   secure: true, // 是否使用tls加密。默认为false，当我们设置为true时，建议端口设置为465
   auth: {
-    user: 'journeysite@163.com', // 邮箱账号
+    user: 'journeysite@163.com', // 邮箱账号 pass:li1149926505
     pass: 'VJNMREZMDZGDIHDE' // 邮箱授权码
   }
 });
