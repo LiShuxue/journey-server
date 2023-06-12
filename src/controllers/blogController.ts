@@ -8,7 +8,7 @@ import appConfig from '../config';
 const publishNewBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> publishNewBlog');
   try {
-    let blog: IBlog = ctx.request.body.blog;
+    let blog: IBlog = ctx.request.body;
     blog.publishTime = Date.now();
     blog.updateTime = Date.now();
     blog.see = 0;
@@ -101,7 +101,7 @@ const deleteBlog = async (ctx: Context): Promise<any> => {
 const updateBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> updateBlog');
   try {
-    let blog: IBlog = ctx.request.body.blog;
+    let blog: IBlog = ctx.request.body;
     blog.image = Object.assign({ name: '', url: '' }, blog.image);
     await BlogModel.updateBlog(blog._id, blog);
     ctx.status = 200;

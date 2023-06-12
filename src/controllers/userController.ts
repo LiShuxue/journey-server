@@ -130,10 +130,10 @@ const deleteUser = async (ctx: Context): Promise<any> => {
 const updateUser = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/userController.js --> updateUser');
   try {
-    let user: IUser = ctx.request.body.user;
+    let user: IUser = ctx.request.body;
     user.password = crypto
       .createHmac('sha256', secret)
-      .update(ctx.request.body.user.password)
+      .update(ctx.request.body.password)
       .digest('hex');
     await UserModel.updateUser(user._id, user);
     ctx.status = 200;
