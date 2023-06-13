@@ -63,7 +63,7 @@ jobs:
       - name: Pm2 start # 启动 pm2
         uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
         with:
-          command: pm2 start pm2.config.json --env prd
+          command: pm2 start /root/project/journey/journey-server/pm2.config.json --env prd
           username: root
           host: ${{ secrets.SERVER_IP }}
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
