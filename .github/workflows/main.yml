@@ -12,58 +12,11 @@ jobs:
 
     runs-on: ubuntu-latest # 运行环境，最新ubuntu
 
-    strategy:
-      matrix:
-        node-version: [14.x] # 使用node
-
     steps:
-      - name: Use Node.js ${{ matrix.node-version }} # 使用 node
-        uses: actions/setup-node@v3
+      - name: excute command # 更新代码和重启
+        uses: garygrossgarten/github-action-ssh@master # 使用第三方action 远程执行命令
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Show version # 查看版本，方便从log信息上确认
-        run: node -v && npm -v && npm config set registry https://registry.npmmirror.com
-
-      - name: install yarn
-        run: npm i -g yarn # 安装yarn
-
-      - name: setYarnEnv
-        run: yarn config set registry https://registry.npmmirror.com # 设置npm源
-
-      - name: Checkout # check out the repository
-        uses: actions/checkout@v3 # 这里使用了github官方提供的action,checkout项目到虚拟机上
-
-      - name: Install Dependencies # 安装依赖
-        run: yarn
-
-      - name: Build # 构建
-        run: yarn build
-
-      - name: remove source map # 删除source map
-        run: rm -rf dist/js/*.map
-
-      - name: Clean remote folder # 删除远程的代码
-        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
-        with:
-          command: rm -rf /root/project/journey/journey-server/dist /root/project/journey/journey-server/pm2.config.json
+          command: cd /root/project/journey/journey-server && git checkout . && git pull && yarn --ignore-engines && yarn re-start
           username: root
           host: ${{ secrets.SERVER_IP }}
           privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
-
-      - name: Upload build file to server # 部署
-        uses: appleboy/scp-action@master # 使用第三方action 上传静态文件到服务器
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: 'dist,pm2.config.json'
-          target: '/root/project/journey/journey-server' # 代码部署路径
-
-      - name: Pm2 start # 启动 pm2
-        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
-        with:
-          command: pm2 start /root/project/journey/journey-server/pm2.config.json --env prd
-          username: root
-          host: ${{ secrets.SERVER_IP }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
