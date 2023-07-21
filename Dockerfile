@@ -36,5 +36,5 @@ ENV NODE_ENV=production
 CMD [ "node", "dist/server.js" ]
 
 # 可以通过 docker build -t journey-server . 来创建本地镜像，默认是latest标签
-# 通过 docker run -d -p 4000:4000 --rm journey-server 来运行此镜像
+# 通过 docker run -d -p 4000:4000 --name journey-server --network journey-network --rm journey-server 来运行此镜像
 # 通过 docker exec -it fdba3 sh 进入容器内部
