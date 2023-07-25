@@ -1,5 +1,4 @@
 import * as nodemailer from 'nodemailer';
-import { IBlog } from '../models/Blog';
 import sentry from './sentry';
 import schedule from 'node-schedule';
 

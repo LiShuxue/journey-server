@@ -42,7 +42,7 @@ export interface IBlog {
   comments: IComment[];
 }
 
-export interface ISimpleBlog extends Document {
+export interface ISimpleBlog {
   title: string;
   subTitle: string;
   image: IImage;
