@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import db from './db/mongodb';
+import mongodb from './db/mongodb';
 import sentry from './utils/sentry';
 import router from './routes';
 import cors from 'koa2-cors';
@@ -10,7 +10,8 @@ import logger from './utils/logger';
 const app: Koa = new Koa();
 app.proxy = true;
 
-db.dbStart();
+// 连接到数据库
+mongodb.connectToDatabase();
 
 app.use(
   cors({
@@ -43,4 +44,10 @@ app.on('error', (err: never) => {
 
 app.listen(4000, () => {
   logger.info('server starting...');
+});
+
+// 应用程序结束时关闭连接
+process.on('SIGINT', async () => {
+  await mongodb.closeConnection();
+  process.exit(0);
 });

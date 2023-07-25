@@ -16,7 +16,7 @@ const login = async (ctx: Context): Promise<any> => {
       .update(ctx.request.body.password)
       .digest('hex');
 
-    let doc: IUser = await UserModel.getUser(username);
+    let doc = await UserModel.getUser(username);
 
     if (!doc) {
       ctx.status = 200;
@@ -62,15 +62,14 @@ const register = async (ctx: Context): Promise<any> => {
       .update(ctx.request.body.password)
       .digest('hex');
 
-    let user: IUser = new UserModel.User({
+    let user: IUser = {
       username: username,
       password: hashPass
-    });
-    let result: IUser = await UserModel.createUser(user);
+    };
+    await UserModel.createUser(user);
     ctx.status = 200;
     ctx.body = {
-      successMsg: '注册成功!',
-      username: result.username
+      successMsg: '注册成功!'
     };
   } catch (err) {
     if (err.code === 11000) {
@@ -93,7 +92,7 @@ const register = async (ctx: Context): Promise<any> => {
 const userList = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/userController.js --> userList');
   try {
-    let userList: IUser[] = await UserModel.getUserList();
+    let userList = await UserModel.getUserList();
     ctx.status = 200;
     ctx.body = {
       successMsg: '获取用户列表成功!',
@@ -130,7 +129,7 @@ const deleteUser = async (ctx: Context): Promise<any> => {
 const updateUser = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/userController.js --> updateUser');
   try {
-    let user: IUser = ctx.request.body;
+    let user = ctx.request.body;
     user.password = crypto
       .createHmac('sha256', secret)
       .update(ctx.request.body.password)

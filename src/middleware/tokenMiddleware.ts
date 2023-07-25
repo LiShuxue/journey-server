@@ -84,7 +84,7 @@ const verifyRefreshToken = (refresh_token: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     try {
       jwt.verify(refresh_token, secret);
-      resolve();
+      resolve(true);
     } catch (err) {
       reject(err);
     }

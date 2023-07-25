@@ -1,33 +1,35 @@
 import db_config from './config';
 import logger from '../utils/logger';
-const mongoose = require('mongoose');
+import { MongoClient } from 'mongodb';
 
 // 'mongodb://journey:journey@localhost:27017/journey'
 const db_path: string = `mongodb://${db_config.username}:${db_config.password}@${db_config.host}:${db_config.port}/${db_config.db}`;
-const db = mongoose.connection;
+const client = new MongoClient(db_path);
 
-let maxConnectTimes: number = 0;
-db.on('error', () => {
-  logger.info('DB connect failed...');
-  if (maxConnectTimes < 5) {
-    setTimeout(() => {
-      maxConnectTimes++;
-      logger.info('DB connect again...');
-      dbStart();
-    }, 2000);
-  } else {
-    logger.info(`DB can't connect now becuase some reason...`);
+const connectToDatabase = async () => {
+  try {
+    await client.connect();
+    logger.info('Connected to MongoDB!');
+  } catch (err) {
+    logger.error('Error connecting to MongoDB:', err);
   }
-});
-db.once('open', () => {
-  logger.info('DB connected...');
-});
+};
 
-const dbStart = function(): void {
-  mongoose.set('useCreateIndex', true);
-  mongoose.connect(db_path);
+const closeConnection = async () => {
+  try {
+    await client.close();
+    logger.info('Connection to MongoDB closed.');
+  } catch (err) {
+    logger.error('Error closing MongoDB connection:', err);
+  }
+};
+
+const getCollection = (collectionName: string) => {
+  return client.db().collection(collectionName);
 };
 
 export default {
-  dbStart
+  connectToDatabase,
+  getCollection,
+  closeConnection
 };

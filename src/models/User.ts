@@ -1,78 +1,47 @@
-import { Schema, Document, Model, model } from 'mongoose';
+import { InsertOneResult, ObjectId } from 'mongodb';
+import mongodb from '../db/mongodb';
 
-export interface IUser extends Document {
+export interface IUser {
   username: string;
   password: string;
 }
 
-const userSchema: Schema = new Schema(
-  {
-    username: { unique: true, type: String },
-    password: { type: String }
-  },
-  {
-    collection: 'User' // 加上这个就不会在程序中定义的是User而真实数据库中变成了Users
-  }
-);
+const User = mongodb.getCollection('User'); // 获取User表
 
-const User: Model<IUser, {}> = model<IUser>('User', userSchema);
-
-const createUser = (user: IUser): Promise<IUser> => {
-  return User.create(user);
+const createUser = async (user: IUser) => {
+  const result: InsertOneResult = await User.insertOne(user);
+  return result;
 };
 
-const getUser = (username: string): Promise<IUser> => {
-  return new Promise((resolve, reject) => {
-    User.findOne({ username }, (err, doc) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(doc);
-    });
-  });
+const getUser = async (username: string) => {
+  const query = { username };
+  const user = await User.findOne(query);
+  return user;
 };
 
-const getUserList = (): Promise<IUser[]> => {
-  return new Promise((resolve, reject) => {
-    User.find({}, (err, doc) => {
-      if (err) reject(err);
-      resolve(doc);
-    });
-  });
+const getUserList = async () => {
+  const query = {};
+  const cursor = await User.find(query);
+  return cursor.toArray();
 };
 
-const updateUser = (id: string, user: IUser): Promise<IUser> => {
-  return new Promise((resolve, reject) => {
-    User.updateOne(
-      {
-        _id: id
-      },
-      {
-        $set: {
-          username: user.username,
-          password: user.password
-        }
-      },
-      (err, doc) => {
-        if (err) reject(err);
-        resolve(doc);
-      }
-    );
-  });
+const updateUser = async (id: string, user: IUser) => {
+  const filter = { _id: new ObjectId(id) };
+  const updateDoc = {
+    $set: {
+      username: user.username,
+      password: user.password
+    }
+  };
+
+  const result = await User.updateOne(filter, updateDoc);
+  return result;
 };
 
-const deleteUser = (id: string): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    User.deleteOne(
-      {
-        _id: id
-      },
-      err => {
-        if (err) reject(err);
-        resolve();
-      }
-    );
-  });
+const deleteUser = async (id: string) => {
+  const query = { _id: new ObjectId(id) };
+  const result = await User.deleteOne(query);
+  return result;
 };
 
 const deleteAllUser = (ids: string[]): Promise<any> => {

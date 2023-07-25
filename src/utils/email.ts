@@ -29,7 +29,7 @@ const sendMail = (to: string, html: string, subject?: string) => {
   }
 };
 
-const sendMailNotification = (blog: IBlog, comment: any) => {
+const sendMailNotification = (blog: any, comment: any) => {
   sentry.addBreadcrumb('utils/email.js --> sendMailNotification');
   let to = '';
   let msg = '';

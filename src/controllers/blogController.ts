@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import BlogModel, { IBlog, ISimpleBlog, IComment, IReply } from '../models/Blog';
+import BlogModel, { IBlog, IComment, IReply } from '../models/Blog';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
 import emailTool from '../utils/email';
@@ -35,7 +35,7 @@ const publishNewBlog = async (ctx: Context): Promise<any> => {
 const getAllBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> getAllBlog');
   try {
-    let blogList: ISimpleBlog[] = await BlogModel.getAllBlog();
+    let blogList = await BlogModel.getAllBlog();
 
     // 面试中，将某些面试文章下线，不展示
     if (appConfig.isInterview) {
@@ -62,7 +62,7 @@ const getBlogDetailById = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> getBlogDetailById');
   try {
     let id: string = ctx.request.query.id;
-    let blog: IBlog = await BlogModel.getBlogDetailById(id);
+    let blog = await BlogModel.getBlogDetailById(id);
     await BlogModel.updateSeeAccount(blog);
     ctx.status = 200;
     ctx.body = {
@@ -101,7 +101,7 @@ const deleteBlog = async (ctx: Context): Promise<any> => {
 const updateBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> updateBlog');
   try {
-    let blog: IBlog = ctx.request.body;
+    let blog = ctx.request.body;
     blog.image = Object.assign({ name: '', url: '' }, blog.image);
     await BlogModel.updateBlog(blog._id, blog);
     ctx.status = 200;
@@ -125,7 +125,7 @@ const updateLikeAccount = async (ctx: Context): Promise<any> => {
   try {
     let id: string = ctx.request.body.id;
     let isLiked: boolean = ctx.request.body.isLiked;
-    let blog: IBlog = await BlogModel.getBlogDetailById(id);
+    let blog = await BlogModel.getBlogDetailById(id);
 
     let newLikeAccount = blog.like;
     if (isLiked) {
@@ -180,7 +180,7 @@ const addComments = async (ctx: Context): Promise<any> => {
     comment.reply = [];
     comment.isHide = false;
 
-    const blog: IBlog = await BlogModel.getBlogDetailById(blogId);
+    const blog = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
     // 如果有replyName，replyEmail, 说明是回复另一个评论， 而不是一个新的评论
@@ -219,7 +219,7 @@ const hideComments = async (ctx: Context): Promise<any> => {
   try {
     const blogId: string = ctx.request.body.blog_id;
     const commentId: string = ctx.request.body.commentId;
-    const blog: IBlog = await BlogModel.getBlogDetailById(blogId);
+    const blog = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
     const originalComment: any = findCommentById(existingComments, commentId);
@@ -259,7 +259,7 @@ const deleteComments = async (ctx: Context): Promise<any> => {
   try {
     const blogId: string = ctx.request.body.blog_id;
     const commentId: string = ctx.request.body.commentId;
-    const blog: IBlog = await BlogModel.getBlogDetailById(blogId);
+    const blog = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
     deleteCommentById(existingComments, commentId);

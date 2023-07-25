@@ -1,4 +1,5 @@
-import { Schema, Document, Model, model } from 'mongoose';
+import { InsertOneResult, ObjectId } from 'mongodb';
+import mongodb from '../db/mongodb';
 
 interface IImage {
   name: string;
@@ -25,7 +26,7 @@ export interface IComment {
   isHide: boolean;
 }
 
-export interface IBlog extends Document {
+export interface IBlog {
   title: string;
   subTitle: string;
   htmlContent: string;
@@ -54,145 +55,84 @@ export interface ISimpleBlog extends Document {
   tags: ITag;
 }
 
-const blogSchema: Schema = new Schema(
-  {
-    title: String,
-    subTitle: String,
-    htmlContent: String,
-    markdownContent: String,
-    image: {
-      name: String,
-      url: String
-    },
-    isOriginal: Boolean,
-    publishTime: Number,
-    updateTime: Number,
-    see: Number,
-    like: Number,
-    category: String,
-    tags: [String],
-    comments: [Schema.Types.Mixed]
-  },
-  {
-    collection: 'Blog'
-  }
-);
+const Blog = mongodb.getCollection('Blog');
 
-const Blog: Model<IBlog, {}> = model<IBlog>('Blog', blogSchema);
-
-const publishBlog = (blog: IBlog): Promise<IBlog> => {
-  return Blog.create(blog);
+const publishBlog = async (blog: IBlog) => {
+  const result: InsertOneResult = await Blog.insertOne(blog);
+  return result;
 };
 
-/**
- * Modal.find(filter, projection, callback)
- * projection以文档的形式列举结果集中要包含或者排除的字段。
- * 可以指定要包含的字段,例如:｛field: 1｝,或者指定要排除的字段,例如:｛field：0｝
- *
- * 返回bolg集合，但是排除 'htmlContent' 'comments' 和 'markdownContent' 字段
- */
-const getAllBlog = (): Promise<ISimpleBlog[]> => {
-  return new Promise((resolve, reject) => {
-    Blog.find({}, { htmlContent: 0, markdownContent: 0, comments: 0 }, (err, doc) => {
-      if (err) reject(err);
-      resolve(doc);
-    }).sort({ publishTime: -1 });
-  });
+const getAllBlog = async () => {
+  const query = {};
+  const options = {
+    sort: { publishTime: -1 },
+    projection: { htmlContent: 0, markdownContent: 0, comments: 0 }
+  };
+
+  const cursor = await Blog.find(query, options as any);
+  return cursor.toArray();
 };
 
-const getBlogDetailById = (id: string): Promise<IBlog> => {
-  return new Promise((resolve, reject) => {
-    Blog.findById(id, (err, doc) => {
-      if (err) reject(err);
-      resolve(doc);
-    });
-  });
+const getBlogDetailById = async (id: string) => {
+  const query = { _id: new ObjectId(id) };
+  const blog = await Blog.findOne(query);
+  return blog;
 };
 
-const updateSeeAccount = (blog: IBlog): Promise<IBlog> => {
-  return new Promise((resolve, reject) => {
-    Blog.updateOne(
-      { _id: blog.id },
-      {
-        $set: { see: blog.see + 1 }
-      },
-      (err, doc) => {
-        if (err) reject(err);
-        resolve(doc);
-      }
-    );
-  });
+const updateSeeAccount = async (blog: any) => {
+  const filter = { _id: new ObjectId(blog._id) };
+  const updateDoc = {
+    $set: { see: blog.see + 1 }
+  };
+
+  const result = await Blog.updateOne(filter, updateDoc);
+  return result;
 };
 
-const updateLikeAccount = (blog: IBlog, like: number): Promise<IBlog> => {
-  return new Promise((resolve, reject) => {
-    Blog.updateOne(
-      { _id: blog.id },
-      {
-        $set: { like: like }
-      },
-      (err, doc) => {
-        if (err) reject(err);
-        resolve(doc);
-      }
-    );
-  });
+const updateLikeAccount = async (blog: any, like: number) => {
+  const filter = { _id: new ObjectId(blog._id) };
+  const updateDoc = {
+    $set: { like }
+  };
+
+  const result = await Blog.updateOne(filter, updateDoc);
+  return result;
 };
 
-const updateComments = (blog: IBlog, comments: IComment[]): Promise<IBlog> => {
-  return new Promise((resolve, reject) => {
-    Blog.updateOne(
-      { _id: blog.id },
-      {
-        $set: { comments: comments }
-      },
-      (err, doc) => {
-        if (err) reject(err);
-        resolve(doc);
-      }
-    );
-  });
+const updateComments = async (blog: any, comments: IComment[]) => {
+  const filter = { _id: new ObjectId(blog._id) };
+  const updateDoc = {
+    $set: { comments }
+  };
+
+  const result = await Blog.updateOne(filter, updateDoc);
+  return result;
 };
 
-const updateBlog = (id: string, blog: IBlog): Promise<IBlog> => {
-  return new Promise((resolve, reject) => {
-    Blog.updateOne(
-      {
-        _id: id
-      },
-      {
-        $set: {
-          title: blog.title,
-          subTitle: blog.subTitle,
-          htmlContent: blog.htmlContent,
-          markdownContent: blog.markdownContent,
-          image: blog.image,
-          isOriginal: blog.isOriginal,
-          updateTime: Date.now(),
-          category: blog.category,
-          tags: blog.tags
-        }
-      },
-      (err, doc) => {
-        if (err) reject(err);
-        resolve(doc);
-      }
-    );
-  });
+const updateBlog = async (id: string, blog: any) => {
+  const filter = { _id: new ObjectId(id) };
+  const updateDoc = {
+    $set: {
+      title: blog.title,
+      subTitle: blog.subTitle,
+      htmlContent: blog.htmlContent,
+      markdownContent: blog.markdownContent,
+      image: blog.image,
+      isOriginal: blog.isOriginal,
+      updateTime: Date.now(),
+      category: blog.category,
+      tags: blog.tags
+    }
+  };
+
+  const result = await Blog.updateOne(filter, updateDoc);
+  return result;
 };
 
-const deleteBlog = (id: string): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    Blog.deleteOne(
-      {
-        _id: id
-      },
-      err => {
-        if (err) reject(err);
-        resolve();
-      }
-    );
-  });
+const deleteBlog = async (id: string) => {
+  const query = { _id: new ObjectId(id) };
+  const result = await Blog.deleteOne(query);
+  return result;
 };
 
 const deleteAllBlog = (ids: string[]): Promise<any> => {
