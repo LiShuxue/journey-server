@@ -17,6 +17,6 @@ jobs:
         uses: garygrossgarten/github-action-ssh@master # 使用第三方action 远程执行命令
         with:
           command: cd /root/project/journey/journey-server && git checkout . && git pull && yarn --ignore-engines && yarn re-start
-          username: root
           host: ${{ secrets.SERVER_IP }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
