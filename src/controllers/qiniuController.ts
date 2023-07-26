@@ -1,7 +1,8 @@
 import qiniu from '../utils/qiniuUtil';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
-const { exec } = require('node:child_process');
+const util = require('util');
+const exec = util.promisify(require('node:child_process').exec);
 
 const getQiniuUploadToken = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/qiniuController.js --> getQiniuUploadToken');
@@ -44,7 +45,7 @@ const adminUpload = async (ctx: Context) => {
     const path = `/root/project/${project}`;
     // 更改进程的当前工作目录
     process.chdir(path);
-    exec('git pull');
+    await exec('git pull');
     // 上传至七牛云
     const qiniuPath = project === 'blog-article' ? `blog/image/${fromPath}` : `resume/${fromPath}`;
     const sourceFilePath = `${path}/${fromPath}`;

@@ -49,13 +49,13 @@ const fileUpload = (qiniuPath: string, sourceFilePath: string) => {
       if (respErr) {
         logger.error('Upload error:', respErr);
         reject(respErr);
+      } else {
+        logger.info('Upload successful.');
+        resolve({
+          respBody,
+          respInfo
+        });
       }
-
-      logger.info('Upload successful.');
-      resolve({
-        respBody,
-        respInfo
-      });
     });
   });
 };

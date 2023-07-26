@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import mongodb from './db/mongodb';
+import backup from './db/backup';
 import sentry from './utils/sentry';
 import router from './routes';
 import cors from 'koa2-cors';
@@ -12,6 +13,8 @@ app.proxy = true;
 
 // 连接到数据库
 mongodb.connectToDatabase();
+// 每天备份数据库数据
+backup.scheduleTask();
 
 app.use(
   cors({
