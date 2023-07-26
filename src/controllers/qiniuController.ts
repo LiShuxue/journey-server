@@ -1,6 +1,7 @@
 import qiniu from '../utils/qiniuUtil';
 import sentry from '../utils/sentry';
 import { Context } from 'koa';
+const { exec } = require('node:child_process');
 
 const getQiniuUploadToken = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/qiniuController.js --> getQiniuUploadToken');
@@ -35,7 +36,36 @@ const deleteFile = async (ctx: Context): Promise<any> => {
   }
 };
 
+const adminUpload = async (ctx: Context) => {
+  try {
+    const project = ctx.request.body.project;
+    const fromPath = ctx.request.body.fromPath;
+
+    const path = `/root/project/${project}`;
+    // 更改进程的当前工作目录
+    process.chdir(path);
+    exec('git pull');
+    // 上传至七牛云
+    const qiniuPath = project === 'blog-article' ? `blog/image/${fromPath}` : `resume/${fromPath}`;
+    const sourceFilePath = `${path}/${fromPath}`;
+    await qiniu.fileUpload(qiniuPath, sourceFilePath);
+
+    ctx.status = 200;
+    ctx.body = {
+      successMsg: '服务器文件上传成功!'
+    };
+  } catch (err) {
+    sentry.captureException(err);
+    ctx.status = 500;
+    ctx.body = {
+      errMsg: '服务器文件上传失败!',
+      err
+    };
+  }
+};
+
 export default {
   getQiniuUploadToken,
-  deleteFile
+  deleteFile,
+  adminUpload
 };

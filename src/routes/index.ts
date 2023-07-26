@@ -12,6 +12,6 @@ const router = new Router();
 router.use('/blog-api/admin', userRoute.routes(), userRoute.allowedMethods());
 router.use('/blog-api/blog', blogRoute.routes(), blogRoute.allowedMethods());
 router.use('/blog-api/qiniu', qiniuRoute.routes(), qiniuRoute.allowedMethods());
-router.use('/blog-api/common', commonRoute.routes(), qiniuRoute.allowedMethods());
+router.use('/blog-api/common', commonRoute.routes(), commonRoute.allowedMethods());
 
 export default router;
