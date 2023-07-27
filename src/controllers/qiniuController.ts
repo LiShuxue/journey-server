@@ -38,6 +38,7 @@ const deleteFile = async (ctx: Context): Promise<any> => {
 };
 
 const adminUpload = async (ctx: Context) => {
+  sentry.addBreadcrumb('controllers/qiniuController.js --> adminUpload');
   try {
     const project = ctx.request.body.project;
     const fromPath = ctx.request.body.fromPath;

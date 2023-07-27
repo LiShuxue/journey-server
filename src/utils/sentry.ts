@@ -1,4 +1,5 @@
 const Sentry = require('@sentry/node');
+import logger from './logger';
 
 interface Scope {
   // eslint-disable-next-line
@@ -34,6 +35,7 @@ const setExtraContext = (key: string, obj: any) => {
 };
 
 const addBreadcrumb = (message: string, data?: any, category: string = 'breadcrumb', level: LogLevel = 'info') => {
+  logger.info(message);
   Sentry.addBreadcrumb({
     message,
     data,
@@ -43,6 +45,7 @@ const addBreadcrumb = (message: string, data?: any, category: string = 'breadcru
 };
 
 const captureException = (error: any) => {
+  logger.error(error);
   error && Sentry.captureException(error);
 };
 

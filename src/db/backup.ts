@@ -7,6 +7,7 @@ const util = require('util');
 const exec = util.promisify(require('node:child_process').exec);
 
 const dbBackup = async () => {
+  logger.info('start db backup');
   try {
     const dbBackupPath = '/root/mongodb/backup';
     // 更改进程的当前工作目录
@@ -28,6 +29,7 @@ const dbBackup = async () => {
 };
 
 const scheduleTask = () => {
+  logger.info('start setup schedule task');
   if (process.env.NODE_ENV !== 'production') {
     return;
   }

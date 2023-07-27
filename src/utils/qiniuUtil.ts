@@ -47,10 +47,10 @@ const fileUpload = (qiniuPath: string, sourceFilePath: string) => {
   return new Promise((resolve, reject) => {
     formUploader.putFile(uploadToken(qiniuPath), qiniuPath, sourceFilePath, putExtra, (respErr, respBody, respInfo) => {
       if (respErr) {
-        logger.error('Upload error:', respErr);
+        logger.error('Upload error: ', respErr);
         reject(respErr);
       } else {
-        logger.info('Upload successful.');
+        logger.info('Upload successful');
         resolve({
           respBody,
           respInfo

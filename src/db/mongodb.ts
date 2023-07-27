@@ -25,6 +25,7 @@ const closeConnection = async () => {
 };
 
 const getCollection = (collectionName: string) => {
+  logger.info('getCollection: ', collectionName);
   return client.db().collection(collectionName);
 };
 
