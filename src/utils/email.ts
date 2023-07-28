@@ -9,8 +9,8 @@ const transporter = nodemailer.createTransport({
   secure: true, // 是否使用tls加密。默认为false，当我们设置为true时，建议端口设置为465
   auth: {
     user: 'journeysite@163.com', // 邮箱账号 pass:li1149926505
-    pass: 'VJNMREZMDZGDIHDE' // 邮箱授权码
-  }
+    pass: 'VJNMREZMDZGDIHDE', // 邮箱授权码
+  },
 });
 
 const sendMail = (to: string, html: string, subject?: string) => {
@@ -21,7 +21,7 @@ const sendMail = (to: string, html: string, subject?: string) => {
       from: `"Journey" <journeysite@163.com>`, // 从哪个邮箱发送
       to, // 收件人，多个邮箱以逗号分割
       subject: subject || '您收到了新的评论', // 标题
-      html // html body
+      html, // html body
     });
   } catch (err) {
     sentry.captureException(err);
@@ -70,7 +70,7 @@ const sendMailSchedule = () => {
   const options = {
     second: 0,
     minute: 0,
-    hour: 10
+    hour: 10,
   };
   schedule.scheduleJob(options, () => {
     // to do
@@ -79,5 +79,5 @@ const sendMailSchedule = () => {
 
 export default {
   sendMailNotification,
-  sendMailSchedule
+  sendMailSchedule,
 };

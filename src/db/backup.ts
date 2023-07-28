@@ -1,10 +1,11 @@
 import qiniu from '../utils/qiniuUtil';
 import logger from '../utils/logger';
 import dayjs from 'dayjs';
-const schedule = require('node-schedule');
+import schedule from 'node-schedule';
+import util from 'util';
+import { exec } from 'node:child_process';
 
-const util = require('util');
-const exec = util.promisify(require('node:child_process').exec);
+const execPromise = util.promisify(exec);
 
 const dbBackup = async () => {
   logger.info('start db backup');
@@ -12,13 +13,13 @@ const dbBackup = async () => {
     const dbBackupPath = '/root/mongodb/backup';
     // 更改进程的当前工作目录
     process.chdir(dbBackupPath);
-    await exec(
-      `docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue`
+    await execPromise(
+      `docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue`,
     );
     // 压缩数据库备份文件
     const time = dayjs().format('YYYY-MM-DD-HH-mm-ss');
     const fileName = `DB-journey-${time}.zip`;
-    await exec(`zip -r ${fileName} journey`);
+    await execPromise(`zip -r ${fileName} journey`);
     // 上传至七牛云
     const qiniuPath = 'blog/mongodb/' + fileName;
     const sourceFilePath = `${dbBackupPath}/${fileName}`;
@@ -29,10 +30,10 @@ const dbBackup = async () => {
 };
 
 const scheduleTask = () => {
-  logger.info('start setup schedule task');
   if (process.env.NODE_ENV !== 'production') {
     return;
   }
+  logger.info('start setup schedule task');
   /**
    * 参数：
    * second (0-59)
@@ -46,7 +47,7 @@ const scheduleTask = () => {
   const options = {
     second: 0,
     minute: 0,
-    hour: 4
+    hour: 4,
   };
   // 每天4点
   schedule.scheduleJob(options, async () => {
@@ -56,5 +57,5 @@ const scheduleTask = () => {
 
 export default {
   scheduleTask,
-  dbBackup
+  dbBackup,
 };

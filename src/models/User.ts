@@ -30,8 +30,8 @@ const updateUser = async (id: string, user: IUser) => {
   const updateDoc = {
     $set: {
       username: user.username,
-      password: user.password
-    }
+      password: user.password,
+    },
   };
 
   const result = await User.updateOne(filter, updateDoc);
@@ -45,7 +45,7 @@ const deleteUser = async (id: string) => {
 };
 
 const deleteAllUser = (ids: string[]): Promise<any> => {
-  let promiseArr = ids.map(id => {
+  const promiseArr = ids.map((id) => {
     return deleteUser(id);
   });
   return Promise.all(promiseArr);
@@ -57,5 +57,5 @@ export default {
   getUserList,
   updateUser,
   deleteAllUser,
-  User
+  User,
 };

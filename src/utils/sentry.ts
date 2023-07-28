@@ -5,7 +5,7 @@ Sentry.init({
   dsn: 'https://c0cc657e1c54459eb8b51d60df18a121@o212666.ingest.sentry.io/1510147',
   // We recommend adjusting this value in production, or using tracesSampler
   // for finer control
-  tracesSampleRate: 1.0
+  tracesSampleRate: 1.0,
 });
 
 const addBreadcrumb = (message: string) => {
@@ -19,5 +19,5 @@ const captureException = (error: any) => {
 };
 export default {
   addBreadcrumb,
-  captureException
+  captureException,
 };

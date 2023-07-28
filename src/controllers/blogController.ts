@@ -1,14 +1,14 @@
 import crypto from 'crypto';
-import BlogModel, { IBlog, IComment, IReply } from '../models/Blog';
+import BlogModel, { IComment, IReply } from '../models/Blog';
 import sentry from '../utils/sentry';
-import { Context } from 'koa';
+import type { Context } from 'koa';
 import emailTool from '../utils/email';
 import appConfig from '../config';
 
 const publishNewBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> publishNewBlog');
   try {
-    let blog: IBlog = ctx.request.body;
+    const blog: any = ctx.request.body;
     blog.publishTime = Date.now();
     blog.updateTime = Date.now();
     blog.see = 0;
@@ -20,14 +20,14 @@ const publishNewBlog = async (ctx: Context): Promise<any> => {
     await BlogModel.publishBlog(blog);
     ctx.status = 200;
     ctx.body = {
-      successMsg: '文章发表成功!'
+      successMsg: '文章发表成功!',
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '发表文章失败!',
-      err
+      err,
     };
   }
 };
@@ -39,21 +39,21 @@ const getAllBlog = async (ctx: Context): Promise<any> => {
 
     // 面试中，将某些面试文章下线，不展示
     if (appConfig.isInterview) {
-      blogList = blogList.filter(blog => {
+      blogList = blogList.filter((blog) => {
         return !appConfig.blackList.includes(blog.category);
       });
     }
 
     ctx.status = 200;
     ctx.body = {
-      blogList
+      blogList,
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '获取博客列表失败!',
-      err
+      err,
     };
   }
 };
@@ -61,19 +61,19 @@ const getAllBlog = async (ctx: Context): Promise<any> => {
 const getBlogDetailById = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> getBlogDetailById');
   try {
-    let id: string = ctx.request.query.id;
-    let blog = await BlogModel.getBlogDetailById(id);
+    const id: string = ctx.request.query?.id as string || '';
+    const blog = await BlogModel.getBlogDetailById(id);
     await BlogModel.updateSeeAccount(blog);
     ctx.status = 200;
     ctx.body = {
-      blog
+      blog,
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '获取博客详细信息失败!',
-      err
+      err,
     };
   }
 };
@@ -81,19 +81,19 @@ const getBlogDetailById = async (ctx: Context): Promise<any> => {
 const deleteBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> deleteBlog');
   try {
-    let ids: string[] = ctx.request.body.ids;
+    const ids: string[] = (ctx.request.body as any).ids;
     await BlogModel.deleteAllBlog(ids);
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '删除博客成功!'
+      successMsg: '删除博客成功!',
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '删除博客失败!',
-      err
+      err,
     };
   }
 };
@@ -101,19 +101,19 @@ const deleteBlog = async (ctx: Context): Promise<any> => {
 const updateBlog = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> updateBlog');
   try {
-    let blog = ctx.request.body;
+    const blog: any = ctx.request.body;
     blog.image = Object.assign({ name: '', url: '' }, blog.image);
     await BlogModel.updateBlog(blog._id, blog);
     ctx.status = 200;
     ctx.body = {
-      successMsg: '更新博客成功!'
+      successMsg: '更新博客成功!',
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '更新博客失败!',
-      err
+      err,
     };
   }
 };
@@ -123,9 +123,9 @@ const updateLikeAccount = async (ctx: Context): Promise<any> => {
 
   let errMsg = '';
   try {
-    let id: string = ctx.request.body.id;
-    let isLiked: boolean = ctx.request.body.isLiked;
-    let blog = await BlogModel.getBlogDetailById(id);
+    const id: string = (ctx.request.body as any).id;
+    const isLiked: boolean = (ctx.request.body as any).isLiked;
+    const blog: any = await BlogModel.getBlogDetailById(id);
 
     let newLikeAccount = blog.like;
     if (isLiked) {
@@ -147,7 +147,7 @@ const updateLikeAccount = async (ctx: Context): Promise<any> => {
     ctx.status = 500;
     ctx.body = {
       errMsg,
-      err
+      err,
     };
   }
 };
@@ -168,19 +168,19 @@ const findCommentById = (comments: any[], id: string): any => {
 const addComments = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> addComments');
   try {
-    const blogId: string = ctx.request.body.blog_id;
-    const replyName: string = ctx.request.body.replyName;
-    const replyEmail: string = ctx.request.body.replyEmail;
-    const replyContent: string = ctx.request.body.replyContent;
-    const parentId: string = ctx.request.body.parent_id;
-    const comment: any = ctx.request.body.comment;
+    const blogId: string = (ctx.request.body as any).blog_id;
+    const replyName: string = (ctx.request.body as any).replyName;
+    const replyEmail: string = (ctx.request.body as any).replyEmail;
+    const replyContent: string = (ctx.request.body as any).replyContent;
+    const parentId: string = (ctx.request.body as any).parent_id;
+    const comment: any = (ctx.request.body as any).comment;
     const random = crypto.randomBytes(16).toString('hex');
     comment.id = `${Date.now()}${random}`;
     comment.date = Date.now();
     comment.reply = [];
     comment.isHide = false;
 
-    const blog = await BlogModel.getBlogDetailById(blogId);
+    const blog: any = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
     // 如果有replyName，replyEmail, 说明是回复另一个评论， 而不是一个新的评论
@@ -202,14 +202,14 @@ const addComments = async (ctx: Context): Promise<any> => {
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '评论成功!'
+      successMsg: '评论成功!',
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '评论失败!',
-      err
+      err,
     };
   }
 };
@@ -217,9 +217,9 @@ const addComments = async (ctx: Context): Promise<any> => {
 const hideComments = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> hideComments');
   try {
-    const blogId: string = ctx.request.body.blog_id;
-    const commentId: string = ctx.request.body.commentId;
-    const blog = await BlogModel.getBlogDetailById(blogId);
+    const blogId: string = (ctx.request.body as any).blog_id;
+    const commentId: string = (ctx.request.body as any).commentId;
+    const blog: any = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
     const originalComment: any = findCommentById(existingComments, commentId);
@@ -229,14 +229,14 @@ const hideComments = async (ctx: Context): Promise<any> => {
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '隐藏成功!'
+      successMsg: '隐藏成功!',
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '隐藏失败!',
-      err
+      err,
     };
   }
 };
@@ -257,9 +257,9 @@ const deleteCommentById = (comments: any[], id: string): any => {
 const deleteComments = async (ctx: Context): Promise<any> => {
   sentry.addBreadcrumb('controllers/blogController.js --> deleteComments');
   try {
-    const blogId: string = ctx.request.body.blog_id;
-    const commentId: string = ctx.request.body.commentId;
-    const blog = await BlogModel.getBlogDetailById(blogId);
+    const blogId: string = (ctx.request.body as any).blog_id;
+    const commentId: string = (ctx.request.body as any).commentId;
+    const blog: any = await BlogModel.getBlogDetailById(blogId);
     const existingComments: IComment[] = blog.comments;
 
     deleteCommentById(existingComments, commentId);
@@ -268,14 +268,14 @@ const deleteComments = async (ctx: Context): Promise<any> => {
 
     ctx.status = 200;
     ctx.body = {
-      successMsg: '删除成功!'
+      successMsg: '删除成功!',
     };
   } catch (err) {
     sentry.captureException(err);
     ctx.status = 500;
     ctx.body = {
       errMsg: '删除失败!',
-      err
+      err,
     };
   }
 };
@@ -289,5 +289,5 @@ export default {
   updateLikeAccount,
   addComments,
   hideComments,
-  deleteComments
+  deleteComments,
 };

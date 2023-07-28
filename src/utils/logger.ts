@@ -1,8 +1,8 @@
-import { Logger, Log4js } from 'log4js';
+import type { Logger } from 'log4js';
+import log4js from 'log4js';
+import fs from 'fs';
+import path from 'path';
 
-const fs = require('fs');
-const path = require('path');
-const log4js: Log4js = require('log4js');
 const logPath = path.resolve(__dirname, '../../logs/journey-server');
 
 const logsDir = path.parse(logPath).dir;
@@ -19,11 +19,11 @@ log4js.configure({
       type: 'dateFile', // 日志打印在文件中
       filename: logPath, // 文件名
       pattern: '-yyyy-MM-dd.log',
-      alwaysIncludePattern: true
+      alwaysIncludePattern: true,
     },
     console: {
-      type: 'console' // 日志打印在控制台
-    }
+      type: 'console', // 日志打印在控制台
+    },
   },
 
   // logger分类，如log4js.getLogger('dev')
@@ -32,18 +32,18 @@ log4js.configure({
   categories: {
     dev: {
       appenders: ['console'],
-      level: 'trace'
+      level: 'trace',
     },
     prd: {
       appenders: ['dateFile'],
-      level: 'trace'
+      level: 'trace',
     },
     default: {
       // 必须配置，不然报错
       appenders: ['console'],
-      level: 'all'
-    }
-  }
+      level: 'all',
+    },
+  },
 });
 
 let logger: Logger;

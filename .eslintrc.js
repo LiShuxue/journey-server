@@ -5,12 +5,10 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-    warnOnUnsupportedTypeScriptVersion: true, // typescript-eslint specific options
   },
-  plugins: ['@typescript-eslint', 'prettier'],
-  extends: ['eslint:recommended'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -20,5 +18,6 @@ module.exports = {
     'arrow-spacing': 'off', // =>的前&后括号
     'keyword-spacing': 'off', // 关键字后面的空格，如if else
     semi: 'off', // 语句强制分号结尾:关闭
+    '@typescript-eslint/no-explicit-any': 'off',
   },
 };

@@ -1,5 +1,5 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+import axios from 'axios';
+import { load } from 'cheerio'; // 服务器上操作HTML
 
 const loadWebPage = async () => {
   const res = await axios.get('http://wufazhuce.com/');
@@ -8,11 +8,9 @@ const loadWebPage = async () => {
 };
 
 const getImageAndText = (htmlString: string) => {
-  const $ = cheerio.load(htmlString);
+  const $ = load(htmlString);
   const todayOne = $('#carousel-one .carousel-inner .item.active');
-  const imageUrl = $(todayOne)
-    .find('.fp-one-imagen')
-    .attr('src');
+  const imageUrl = $(todayOne).find('.fp-one-imagen').attr('src');
   const text = $(todayOne)
     .find('.fp-one-cita')
     .text()
@@ -20,7 +18,7 @@ const getImageAndText = (htmlString: string) => {
 
   return {
     imageUrl,
-    text
+    text,
   };
 };
 

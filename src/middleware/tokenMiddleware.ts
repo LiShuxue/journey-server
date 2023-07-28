@@ -17,24 +17,24 @@ const secret: string = 'secret-key';
 const initPayload: Payload = {
   iss: 'Journey', //(Issuer) jwt签发者
   sub: 'lishuxue.site', //(Subject) 该jwt所面向的用户
-  aud: 'lishuxue.site' //(Audience) 接收jwt的一方
+  aud: 'lishuxue.site', //(Audience) 接收jwt的一方
 };
 
 export function createAccessToken(payload: Payload): string {
-  let t_payload: Payload = Object.assign({}, initPayload, payload); //Object.assign(target, ...sources)
+  const t_payload: Payload = Object.assign({}, initPayload, payload); //Object.assign(target, ...sources)
   t_payload.iat = Math.floor(Date.now() / 1000); // jwt的签发时间，单位秒s
   t_payload.exp = Math.floor(Date.now() / 1000) + 5 * 60; // jwt的过期时间，单位秒s
-  let token: string = jwt.sign(t_payload, secret);
+  const token: string = jwt.sign(t_payload, secret);
   return token;
 }
 
 export function createRefreshToken(): string {
-  let t_payload: Payload = {
-    target: 'refresh'
+  const t_payload: Payload = {
+    target: 'refresh',
   };
   t_payload.iat = Math.floor(Date.now() / 1000);
   t_payload.exp = Math.floor(Date.now() / 1000) + 5 * 60 * 60;
-  let token: string = jwt.sign(t_payload, secret);
+  const token: string = jwt.sign(t_payload, secret);
   return token;
 }
 
@@ -49,7 +49,7 @@ const verifyAccessToken = async (ctx: Context): Promise<any> => {
 
   try {
     jwt.verify(access_token, secret);
-  } catch (err) {
+  } catch (err: any) {
     await handleAccessTokenError(err, ctx, access_token, refresh_token);
   }
 };
@@ -58,7 +58,7 @@ const handleAccessTokenError = async (
   err: jwt.JsonWebTokenError,
   ctx: Context,
   access_token: string,
-  refresh_token: string
+  refresh_token: string,
 ): Promise<any> => {
   if (err.name !== 'TokenExpiredError') {
     throw { errMsg: 'Access_Token验证失败!' };
@@ -94,13 +94,13 @@ const verifyRefreshToken = (refresh_token: string): Promise<any> => {
 const autoGenerateNewToken = (access_token: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     try {
-      let decoded: any = jwt.decode(access_token);
-      let username: string = decoded.username;
-      let new_access_token: string = createAccessToken({ username });
-      let new_refresh_token: string = createRefreshToken();
+      const decoded: any = jwt.decode(access_token);
+      const username: string = decoded.username;
+      const new_access_token: string = createAccessToken({ username });
+      const new_refresh_token: string = createRefreshToken();
       resolve({
         new_access_token,
-        new_refresh_token
+        new_refresh_token,
       });
     } catch (err) {
       reject(err);
@@ -115,7 +115,7 @@ const returnNewToken = (ctx: Context): void => {
   }
 };
 
-export async function tokenMiddleware(ctx: Context, next: Function): Promise<any> {
+export async function tokenMiddleware(ctx: Context, next: any): Promise<any> {
   if (handleNotNeedTokenUrl(ctx)) {
     await next();
   } else {
@@ -123,10 +123,10 @@ export async function tokenMiddleware(ctx: Context, next: Function): Promise<any
       await verifyAccessToken(ctx);
       returnNewToken(ctx);
       await next();
-    } catch (err) {
+    } catch (err: any) {
       ctx.status = 401;
       ctx.body = {
-        errMsg: err.errMsg
+        errMsg: err.errMsg,
       };
     }
   }

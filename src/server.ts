@@ -28,8 +28,8 @@ app.use(
     maxAge: 5,
     allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],
-    exposeHeaders: ['new-access-token', 'new-refresh-token']
-  })
+    exposeHeaders: ['new-access-token', 'new-refresh-token'],
+  }),
 );
 
 // bodyparser:该中间件用于处理post请求的数据
@@ -41,7 +41,7 @@ app.use(tokenMiddleware);
 // app加载路由中间件
 app.use(router.routes()).use(router.allowedMethods());
 
-app.on('error', (err: never) => {
+app.on('error', (err: any) => {
   sentry.captureException(err);
 });
 

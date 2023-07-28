@@ -32,5 +32,5 @@ const getCollection = (collectionName: string) => {
 export default {
   connectToDatabase,
   getCollection,
-  closeConnection
+  closeConnection,
 };

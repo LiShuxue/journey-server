@@ -14,24 +14,24 @@ const bucketManager = new qiniu.rs.BucketManager(mac, config);
 
 // 上传凭证
 const uploadToken = (keyToOverwrite: string) => {
-  let options = {
+  const options = {
     scope: bucket + ':' + keyToOverwrite, // 存储空间的Bucket名字+需要覆盖上传的文件
-    expires: 1 * 60 // 上传凭证的过期时间，单位s
+    expires: 1 * 60, // 上传凭证的过期时间，单位s
   };
-  let putPolicy = new qiniu.rs.PutPolicy(options);
+  const putPolicy = new qiniu.rs.PutPolicy(options);
   return putPolicy.uploadToken(mac);
 };
 
 // 从七牛云删除文件
-const deleteFileFromQiniu = function(key: string): Promise<any> {
+const deleteFileFromQiniu = function (key: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    bucketManager.delete(bucket, key, (err: Error, respBody: any, respInfo: any) => {
+    bucketManager.delete(bucket, key, (err: any, respBody: any, respInfo: any) => {
       if (err) {
         reject(err);
       }
       resolve({
         respInfo,
-        respBody
+        respBody,
       });
     });
   });
@@ -41,8 +41,8 @@ const deleteFileFromQiniu = function(key: string): Promise<any> {
 const fileUpload = (qiniuPath: string, sourceFilePath: string) => {
   logger.info(`Start upload file to Qiniuyun, qiniuPath: ${qiniuPath}, sourceFilePath: ${sourceFilePath}`);
 
-  let formUploader = new qiniu.form_up.FormUploader(config);
-  let putExtra = new qiniu.form_up.PutExtra();
+  const formUploader = new qiniu.form_up.FormUploader(config);
+  const putExtra = new qiniu.form_up.PutExtra();
 
   return new Promise((resolve, reject) => {
     formUploader.putFile(uploadToken(qiniuPath), qiniuPath, sourceFilePath, putExtra, (respErr, respBody, respInfo) => {
@@ -53,7 +53,7 @@ const fileUpload = (qiniuPath: string, sourceFilePath: string) => {
         logger.info('Upload successful');
         resolve({
           respBody,
-          respInfo
+          respInfo,
         });
       }
     });
@@ -65,5 +65,5 @@ export default {
   deleteFileFromQiniu,
   uploadDomain,
   downloadDomain,
-  fileUpload
+  fileUpload,
 };

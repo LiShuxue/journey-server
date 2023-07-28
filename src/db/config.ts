@@ -11,7 +11,7 @@ const db_config: DBConfig = {
   host: 'localhost',
   port: 27017,
   username: 'journey', // admin db: lishuxue/lishuxue
-  password: 'journey'
+  password: 'journey',
 };
 
 export default db_config;

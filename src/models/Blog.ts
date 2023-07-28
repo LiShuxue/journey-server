@@ -66,7 +66,7 @@ const getAllBlog = async () => {
   const query = {};
   const options = {
     sort: { publishTime: -1 },
-    projection: { htmlContent: 0, markdownContent: 0, comments: 0 }
+    projection: { htmlContent: 0, markdownContent: 0, comments: 0 },
   };
 
   const cursor = await Blog.find(query, options as any);
@@ -82,7 +82,7 @@ const getBlogDetailById = async (id: string) => {
 const updateSeeAccount = async (blog: any) => {
   const filter = { _id: new ObjectId(blog._id) };
   const updateDoc = {
-    $set: { see: blog.see + 1 }
+    $set: { see: blog.see + 1 },
   };
 
   const result = await Blog.updateOne(filter, updateDoc);
@@ -92,7 +92,7 @@ const updateSeeAccount = async (blog: any) => {
 const updateLikeAccount = async (blog: any, like: number) => {
   const filter = { _id: new ObjectId(blog._id) };
   const updateDoc = {
-    $set: { like }
+    $set: { like },
   };
 
   const result = await Blog.updateOne(filter, updateDoc);
@@ -102,7 +102,7 @@ const updateLikeAccount = async (blog: any, like: number) => {
 const updateComments = async (blog: any, comments: IComment[]) => {
   const filter = { _id: new ObjectId(blog._id) };
   const updateDoc = {
-    $set: { comments }
+    $set: { comments },
   };
 
   const result = await Blog.updateOne(filter, updateDoc);
@@ -121,8 +121,8 @@ const updateBlog = async (id: string, blog: any) => {
       isOriginal: blog.isOriginal,
       updateTime: Date.now(),
       category: blog.category,
-      tags: blog.tags
-    }
+      tags: blog.tags,
+    },
   };
 
   const result = await Blog.updateOne(filter, updateDoc);
@@ -136,7 +136,7 @@ const deleteBlog = async (id: string) => {
 };
 
 const deleteAllBlog = (ids: string[]): Promise<any> => {
-  let promiseArr = ids.map(id => {
+  const promiseArr = ids.map((id) => {
     return deleteBlog(id);
   });
   return Promise.all(promiseArr);
@@ -150,5 +150,5 @@ export default {
   getBlogDetailById,
   updateSeeAccount,
   updateLikeAccount,
-  updateComments
+  updateComments,
 };
