@@ -15,7 +15,9 @@ const addBreadcrumb = (message: string) => {
 
 const captureException = (error: any) => {
   logger.error(error);
-  Sentry.captureException(error);
+  if (process.env.NODE_ENV === 'production') {
+    Sentry.captureException(error);
+  }
 };
 export default {
   addBreadcrumb,
