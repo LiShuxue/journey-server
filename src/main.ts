@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MongodbService } from './mongodb/mongodb.service';
 import { ConfigService } from '@nestjs/config';
+import { LoggerInterceptor } from './interceptors/logger.interceptor';
+import { HttpExceptionFilter } from './filters/httpException.filter';
 
 /*
   Nestjs 是一个类似于Spring的框架。
@@ -31,6 +33,12 @@ async function bootstrap() {
   // 获取app配置
   const configService = app.get(ConfigService);
   const port = configService.get('appConfig.port');
+
+  // 使用拦截器
+  app.useGlobalInterceptors(new LoggerInterceptor());
+
+  // 使用过滤器
+  app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(port);
 }
 bootstrap();

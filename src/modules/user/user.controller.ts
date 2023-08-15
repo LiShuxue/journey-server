@@ -1,5 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, ForbiddenException, Get, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
 
 /*
   使用 @Controller('user') 注解声明一个controller，处理 user 路径下的请求，类里面的每一个方法，处理一个请求。
@@ -12,13 +14,28 @@ import { UserService } from './user.service';
   @Get('list') 中的 / 可加可不加，他是相对控制器根路径user的绝对或者相对。
 */
 @Controller('user')
+@UseGuards(AuthGuard)
 export class UserController {
   // 当控制器被实例化的时候，UserService会被注入，自动实例化userService（默认是单例的，如果已经存在，直接返回）
   constructor(private readonly userService: UserService) {}
 
   @Get('list')
   userList() {
+    console.log('UserController method');
     const userList = this.userService.getUserList();
     return userList;
+  }
+
+  @Get('list/:id')
+  getUser(@Param('id', ValidationPipe) id: number) {
+    console.log('UserController method');
+    const user = this.userService.getUser(id);
+    return user;
+  }
+
+  @Get('testexc')
+  testException() {
+    console.log('UserController method test exception');
+    throw new ForbiddenException();
   }
 }
