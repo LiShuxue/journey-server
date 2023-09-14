@@ -2,7 +2,7 @@ import axios from 'axios';
 import { load } from 'cheerio'; // 服务器上操作HTML
 
 const loadWebPage = async () => {
-  const res = await axios.get('http://wufazhuce.com/');
+  const res = await axios.get('https://wufazhuce.com/');
   const result = getImageAndText(res.data);
   return result;
 };
