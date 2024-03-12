@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import schedule from 'node-schedule';
 import util from 'util';
 import { exec } from 'node:child_process';
+import db_config from './config';
 
 const execPromise = util.promisify(exec);
 
@@ -13,8 +14,9 @@ const dbBackup = async () => {
     const dbBackupPath = '/root/mongodb/backup';
     // 更改进程的当前工作目录
     process.chdir(dbBackupPath);
+    // mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue
     await execPromise(
-      `docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue`,
+      `docker exec journey-mongodb mongodump -h ${db_config.admin?.host}:${db_config.admin?.port} -d journey -o /backup --authenticationDatabase ${db_config.admin?.db} -u ${db_config.admin?.username} -p ${db_config.admin?.password}`,
     );
     // 压缩数据库备份文件
     const now = Date.now();
@@ -32,6 +34,7 @@ const dbBackup = async () => {
     const old = now - 1000 * 60 * 60 * 24 * 7 * 5;
     const oldTime = dayjs(old).format('YYYY-MM-DD-HH-mm');
     const oldFileName = `DB-journey-${oldTime}.zip`;
+    await execPromise(`rm -rf ${oldFileName}`);
     const oldQiniuPath = 'blog/mongodb/' + oldFileName;
     await qiniu.deleteFileFromQiniu(oldQiniuPath);
   } catch (err) {

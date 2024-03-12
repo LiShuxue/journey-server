@@ -4,6 +4,7 @@ interface DBConfig {
   port: number;
   username: string;
   password: string;
+  admin?: DBConfig;
 }
 
 const db_config: DBConfig = {
@@ -12,6 +13,13 @@ const db_config: DBConfig = {
   port: 27017,
   username: 'journey', // admin db: lishuxue/lishuxue
   password: 'journey',
+  admin: {
+    db: 'admin',
+    host: 'localhost',
+    port: 27017,
+    username: 'lishuxue',
+    password: 'lishuxue',
+  },
 };
 
 export default db_config;
