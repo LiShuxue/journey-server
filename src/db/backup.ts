@@ -17,13 +17,23 @@ const dbBackup = async () => {
       `docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue`,
     );
     // 压缩数据库备份文件
-    const time = dayjs().format('YYYY-MM-DD-HH-mm-ss');
+    const now = Date.now();
+    const time = dayjs(now).format('YYYY-MM-DD-HH-mm');
     const fileName = `DB-journey-${time}.zip`;
     await execPromise(`zip -r ${fileName} journey`);
     // 上传至七牛云
     const qiniuPath = 'blog/mongodb/' + fileName;
     const sourceFilePath = `${dbBackupPath}/${fileName}`;
     await qiniu.fileUpload(qiniuPath, sourceFilePath);
+
+    logger.info('start remove old backup');
+    // 每次bucket上总是保留10个。因为每周备份两次，所以相当于备份了5周的。
+    // 删除旧的文件，所以是删除5周之前的那个。
+    const old = now - 1000 * 60 * 60 * 24 * 7 * 5;
+    const oldTime = dayjs(old).format('YYYY-MM-DD-HH-mm');
+    const oldFileName = `DB-journey-${oldTime}.zip`;
+    const oldQiniuPath = 'blog/mongodb/' + oldFileName;
+    await qiniu.deleteFileFromQiniu(oldQiniuPath);
   } catch (err) {
     logger.error('db backup error:', err);
   }
@@ -47,9 +57,10 @@ const scheduleTask = () => {
   const options = {
     second: 0,
     minute: 0,
-    hour: 4,
+    hour: 4, // 凌晨4点
+    dayOfWeek: [3, 5], // 周三和周五
   };
-  // 每天4点
+  // 每周三，周五，凌晨4点执行定时任务
   schedule.scheduleJob(options, async () => {
     dbBackup();
   });

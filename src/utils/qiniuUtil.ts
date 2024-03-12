@@ -23,9 +23,9 @@ const uploadToken = (keyToOverwrite: string) => {
 };
 
 // 从七牛云删除文件
-const deleteFileFromQiniu = function (key: string): Promise<any> {
+const deleteFileFromQiniu = function (qiniuPath: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    bucketManager.delete(bucket, key, (err: any, respBody: any, respInfo: any) => {
+    bucketManager.delete(bucket, qiniuPath, (err: any, respBody: any, respInfo: any) => {
       if (err) {
         reject(err);
       }
