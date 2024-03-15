@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { CreateUserDto } from './user.dto';
+import { User } from './user.schema';
 
 /*
   使用 @Injectable() 注解定义一个service。他是一个provider，所以可以通过 constructor 注入。可以做数据检索和存储等。
@@ -6,14 +10,22 @@ import { Injectable } from '@nestjs/common';
 */
 @Injectable()
 export class UserService {
-  async getUserList() {
-    console.log('UserService getUserList method');
-    return [];
+  // 在服务中通过 @InjectModel(User.name) 注入该模型，并在服务中对该模型进行操作。
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    console.log('UserService createUser method');
+    const user = new this.userModel(createUserDto);
+    return user.save();
   }
 
-  async getUser(id: string) {
+  async getUserList(): Promise<User[]> {
+    console.log('UserService getUserList method');
+    return this.userModel.find().exec();
+  }
+
+  async getUser(id: string): Promise<User> {
     console.log('UserService getUser method');
-    console.log(id);
-    return {};
+    return this.userModel.findById(id);
   }
 }

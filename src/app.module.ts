@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import config from './config/config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
@@ -12,6 +13,25 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
       isGlobal: true,
       load: [config],
     }),
+
+    // 使用 MongooseModule 配置数据库，使用配置文件中的变量来连接数据库
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const host = configService.get('config.db.journey.host');
+        const port = configService.get('config.db.journey.port');
+        const username = configService.get('config.db.journey.username');
+        const password = configService.get('config.db.journey.password');
+        const database = configService.get('config.db.journey.database');
+        const uri = `mongodb://${username}:${password}@${host}:${port}/${database}`;
+
+        return {
+          uri,
+        };
+      },
+    }),
+
+    // 其他业务模块
     UserModule,
   ],
   controllers: [], // controllers：当前模块的控制器

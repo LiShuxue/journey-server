@@ -21,10 +21,10 @@ export class UserController {
 
   @Post('create')
   @UsePipes(ValidationPipe) // 参数验证管道，结合dto中的class-validator一起验证
-  async create(@Body() createUserDto: CreateUserDto) {
-    console.log('UserController create method');
-    console.log(createUserDto);
-    return {};
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    console.log('UserController createUser method');
+    const user = await this.userService.createUser(createUserDto);
+    return user;
   }
 
   @Get('list')
