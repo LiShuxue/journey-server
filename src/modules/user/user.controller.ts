@@ -1,8 +1,7 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { ValidationPipe } from 'src/pipes/validation.pipe';
-import { UserDto } from './user.dto';
+import { CreateUserDto } from './user.dto';
 
 /*
   使用 @Controller('user') 注解声明一个controller，处理 user 路径下的请求，类里面的每一个方法，处理一个请求。
@@ -20,28 +19,25 @@ export class UserController {
   // 当控制器被实例化的时候，UserService会被注入，自动实例化userService（默认是单例的，如果已经存在，直接返回）
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  async create(@Body() userDto: UserDto) {
-    return 'This action adds a new user';
+  @Post('create')
+  @UsePipes(ValidationPipe) // 参数验证管道，结合dto中的class-validator一起验证
+  async create(@Body() createUserDto: CreateUserDto) {
+    console.log('UserController create method');
+    console.log(createUserDto);
+    return {};
   }
 
   @Get('list')
-  async userList() {
-    console.log('UserController method');
+  async getUserList() {
+    console.log('UserController getUserList method');
     const userList = await this.userService.getUserList();
     return userList;
   }
 
   @Get('list/:id')
-  async getUser(@Param('id', ValidationPipe) id: number) {
-    console.log('UserController method');
+  async getUser(@Param('id') id: string) {
+    console.log('UserController getUser method');
     const user = await this.userService.getUser(id);
     return user;
-  }
-
-  @Get('testexc')
-  testException() {
-    console.log('UserController method test exception');
-    throw new ForbiddenException();
   }
 }
