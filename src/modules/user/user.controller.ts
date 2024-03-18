@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CreateUserDto } from './user.dto';
@@ -23,8 +33,12 @@ export class UserController {
   @UsePipes(ValidationPipe) // 参数验证管道，结合dto中的class-validator一起验证
   async createUser(@Body() createUserDto: CreateUserDto) {
     console.log('UserController createUser method');
-    const user = await this.userService.createUser(createUserDto);
-    return user;
+    try {
+      const user = await this.userService.createUser(createUserDto);
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   @Get('list')
@@ -37,7 +51,14 @@ export class UserController {
   @Get('list/:id')
   async getUser(@Param('id') id: string) {
     console.log('UserController getUser method');
-    const user = await this.userService.getUser(id);
-    return user;
+    try {
+      const user = await this.userService.getUser(id);
+      if (!user) {
+        throw '找不到该用户';
+      }
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }
