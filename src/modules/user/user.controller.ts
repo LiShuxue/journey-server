@@ -12,6 +12,8 @@ import {
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CreateUserDto } from './user.dto';
+import { MyLoggerService } from 'src/logger/logger.service';
+import { CustomValidationPipe } from 'src/pipes/customValidation.pipe';
 
 /*
   使用 @Controller('user') 注解声明一个controller，处理 user 路径下的请求，类里面的每一个方法，处理一个请求。
@@ -27,12 +29,17 @@ import { CreateUserDto } from './user.dto';
 @UseGuards(AuthGuard)
 export class UserController {
   // 当控制器被实例化的时候，UserService会被注入，自动实例化userService（默认是单例的，如果已经存在，直接返回）
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly myLogger: MyLoggerService,
+  ) {
+    this.myLogger.setContext('UserController');
+  }
 
   @Post('create')
   @UsePipes(ValidationPipe) // 参数验证管道，结合dto中的class-validator一起验证
   async createUser(@Body() createUserDto: CreateUserDto) {
-    console.log('UserController createUser method');
+    this.myLogger.log('createUser method');
     try {
       const user = await this.userService.createUser(createUserDto);
       return user;
@@ -43,14 +50,14 @@ export class UserController {
 
   @Get('list')
   async getUserList() {
-    console.log('UserController getUserList method');
+    this.myLogger.log('getUserList method');
     const userList = await this.userService.getUserList();
     return userList;
   }
 
   @Get('list/:id')
-  async getUser(@Param('id') id: string) {
-    console.log('UserController getUser method');
+  async getUser(@Param('id', CustomValidationPipe) id: string) {
+    this.myLogger.log('getUser method');
     try {
       const user = await this.userService.getUser(id);
       if (!user) {

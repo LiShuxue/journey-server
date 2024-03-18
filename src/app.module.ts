@@ -15,7 +15,7 @@ import { LoggerModule } from './logger/logger.module';
       load: [config],
     }),
 
-    // 全局使用日志模块，该模块使用 @Global 注解，所以可以在全局被注入。
+    // 根模块使用日志模块，因为Middleware中需要注入
     LoggerModule,
 
     // 使用 MongooseModule 配置数据库，使用配置文件中的变量来连接数据库

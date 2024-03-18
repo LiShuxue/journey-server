@@ -21,7 +21,7 @@ import { MyLoggerService } from './logger/logger.service';
   pipe: 管道是实现 PipeTransform 接口的类，用于在数据传递给控制器之前对其进行验证、转换和处理。管道要么返回数据验证或者转换后的值，要么抛出一个错误。当class-validator结合dto的验证不满足需求时，才需要自定义pipe。
   dto: DTO 的主要目的是提供一种清晰的方式来定义数据结构，并确保数据的一致性和有效性。DTO 可以用于验证传入请求的数据。通过定义输入 DTO，你可以明确地指定哪些字段是必需的，哪些字段是可选的，以及每个字段的验证规则。DTO 也可以用于格式化传出响应的数据。通过定义输出 DTO，你可以指定响应的数据结构，并确保响应的数据符合预期的格式。
 
-  请求流动顺序：传入请求 -> 中间件 -> 守卫guard —> req拦截器 -> 管道 -> 控制器方法执行 -> 调用service -> 控制器返回响应 -> res拦截器 -> 异常过滤器 -> 
+  请求流动顺序：传入请求 -> 中间件 -> 守卫 —> req拦截器 -> 管道 -> 控制器 -> service -> res拦截器 -> 异常过滤器
 */
 
 // main.ts 是应用程序入口文件。负责引导我们的应用程序
@@ -35,10 +35,10 @@ async function bootstrap() {
   app.useLogger(new MyLoggerService());
 
   // 全局使用拦截器
-  app.useGlobalInterceptors(new HttpInterceptor());
+  app.useGlobalInterceptors(new HttpInterceptor(new MyLoggerService()));
 
   // 全局使用过滤器
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(new MyLoggerService()));
 
   // 获取全局配置，这个service是由 @nestjs/config 库提供
   const configService = app.get(ConfigService);
