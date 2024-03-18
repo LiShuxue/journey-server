@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import config from './config/config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -13,6 +14,9 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
       isGlobal: true,
       load: [config],
     }),
+
+    // 全局使用日志模块，该模块使用 @Global 注解，所以可以在全局被注入。
+    LoggerModule,
 
     // 使用 MongooseModule 配置数据库，使用配置文件中的变量来连接数据库
     MongooseModule.forRootAsync({

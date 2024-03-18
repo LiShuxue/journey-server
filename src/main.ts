@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { HttpInterceptor } from './interceptors/http.interceptor';
 import { HttpExceptionFilter } from './filters/httpException.filter';
+import { MyLoggerService } from './logger/logger.service';
 
 /*
   Nestjs 是一个类似于Spring的框架。
@@ -26,7 +27,12 @@ import { HttpExceptionFilter } from './filters/httpException.filter';
 // main.ts 是应用程序入口文件。负责引导我们的应用程序
 async function bootstrap() {
   // 使用 NestFactory 用来创建 Nest 应用实例。
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  // 替换 app 默认的日志输出为自己的日志输出
+  app.useLogger(new MyLoggerService());
 
   // 全局使用拦截器
   app.useGlobalInterceptors(new HttpInterceptor());
