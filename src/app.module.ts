@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import config from './config/config';
-import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { MyMiddleware } from './middlewares/my.middleware';
 import { LoggerModule } from './logger/logger.module';
 
 @Module({
@@ -45,7 +45,7 @@ import { LoggerModule } from './logger/logger.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(LoggerMiddleware) // 可以使用多个中间件
+      .apply(MyMiddleware) // 可以使用多个中间件
       .forRoutes('*'); // 可以使用在特定的路径forRoutes('user')，或者特定的控制器forRoutes(CatsController)，或者是所有路径forRoutes('*')
   }
 }
