@@ -4,7 +4,7 @@
 // 如果你希望 DTO 中的属性可以在对象创建后不能被修改，可以将它们定义为 readonly。
 import { IsString, IsNotEmpty } from 'class-validator';
 
-export class CreateUserDto {
+export class UserDto {
   @IsString()
   @IsNotEmpty()
   username: string;

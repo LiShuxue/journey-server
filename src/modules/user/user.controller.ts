@@ -3,17 +3,20 @@ import {
   Body,
   Controller,
   Get,
-  Param,
+  HttpCode,
   Post,
+  ServiceUnavailableException,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { CreateUserDto } from './user.dto';
+import { UserDto } from './user.dto';
 import { MyLoggerService } from 'src/logger/logger.service';
-import { CustomValidationPipe } from 'src/pipes/customValidation.pipe';
+import { ConfigService } from '@nestjs/config';
+import { createHmac } from 'node:crypto';
+import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
 
 /*
   使用 @Controller('user') 注解声明一个controller，处理 user 路径下的请求，类里面的每一个方法，处理一个请求。
@@ -32,17 +35,63 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly myLogger: MyLoggerService,
+    private readonly configService: ConfigService,
   ) {
     this.myLogger.setContext('UserController');
   }
 
   @Post('create')
+  @HttpCode(200) // Post方法默认返回201，需要返回200的话，用该注解
   @UsePipes(ValidationPipe) // 参数验证管道，结合dto中的class-validator一起验证
-  async createUser(@Body() createUserDto: CreateUserDto) {
+  async createUser(@Body() userDto: UserDto) {
     this.myLogger.log('createUser method');
+
     try {
-      const user = await this.userService.createUser(createUserDto);
-      return user;
+      const secret = this.configService.get('config.secret');
+      const hashPass = createHmac('sha256', secret).update(userDto.password).digest('hex');
+
+      const newUserDto = {
+        username: userDto.username,
+        password: hashPass,
+      };
+      const user = await this.userService.createUser(newUserDto);
+      return {
+        username: user.username,
+      };
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new BadRequestException('用户名已存在');
+      }
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Post('login')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  async login(@Body() userDto: UserDto) {
+    this.myLogger.log('login method');
+
+    try {
+      const secret = this.configService.get('config.secret');
+      const hashPass = createHmac('sha256', secret).update(userDto.password).digest('hex');
+
+      const user = await this.userService.getUserByName(userDto.username);
+      if (!user) {
+        throw '用户名不存在';
+      }
+
+      if (user.password !== hashPass) {
+        throw '密码错误';
+      }
+
+      const access_token = '';
+      const refresh_token = '';
+      return {
+        access_token,
+        refresh_token,
+        username: user.username,
+      };
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -51,19 +100,54 @@ export class UserController {
   @Get('list')
   async getUserList() {
     this.myLogger.log('getUserList method');
-    const userList = await this.userService.getUserList();
-    return userList;
+
+    try {
+      const userList = await this.userService.getUserList();
+      return userList;
+    } catch (error) {
+      throw new ServiceUnavailableException(error);
+    }
   }
 
-  @Get('list/:id')
-  async getUser(@Param('id', CustomValidationPipe) id: string) {
-    this.myLogger.log('getUser method');
+  @Post('delete')
+  @HttpCode(200)
+  async deleteUser(@Body('id', IdValidationPipe) id: string) {
+    this.myLogger.log('getUserList method');
+
     try {
-      const user = await this.userService.getUser(id);
+      const user = await this.userService.deleteUser(id);
       if (!user) {
-        throw '找不到该用户';
+        throw '未找到用户';
       }
-      return user;
+      return {
+        username: user.username,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Post('update')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  async updateUser(@Body() userDto: UserDto) {
+    this.myLogger.log('updateUser method');
+
+    try {
+      const secret = this.configService.get('config.secret');
+      const hashPass = createHmac('sha256', secret).update(userDto.password).digest('hex');
+
+      const newUserDto = {
+        username: userDto.username,
+        password: hashPass,
+      };
+      const user = await this.userService.updateUser(newUserDto);
+      if (!user) {
+        throw '未找到用户';
+      }
+      return {
+        username: user.username,
+      };
     } catch (error) {
       throw new BadRequestException(error);
     }

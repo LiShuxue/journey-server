@@ -3,6 +3,7 @@ import { registerAs } from '@nestjs/config';
 // 配置管理，值可以从.env或者.yaml文件中获取
 export default registerAs('config', () => ({
   port: 4000,
+  secret: 'journey-secret-key',
   db: {
     // journey db，业务DB
     journey: {
