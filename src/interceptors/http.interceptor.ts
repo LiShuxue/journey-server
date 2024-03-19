@@ -24,9 +24,14 @@ export class HttpInterceptor implements NestInterceptor {
     return next.handle().pipe(
       // next.handle() 返回一个 Observable，此流包含从路由处理程序返回的值（响应）, 我们可以使用 map() 运算符对其进行改变。
       map((data) => {
-        this.myLogger.log('response: ' + JSON.stringify(data));
+        const response = {
+          code: 200,
+          message: '调用成功',
+          data,
+        };
+        this.myLogger.log('response: ' + JSON.stringify(response));
         // 在这里对响应数据进行转换或操作
-        return data; // 返回转换后的数据
+        return response; // 返回转换后的数据
       }),
     );
   }
