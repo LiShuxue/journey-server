@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { UserDto } from './user.dto';
 import { MyLoggerService } from 'src/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
@@ -62,37 +62,6 @@ export class UserController {
       if (error.code === 11000) {
         throw new BadRequestException('用户名已存在');
       }
-      throw new BadRequestException(error);
-    }
-  }
-
-  @Post('login')
-  @HttpCode(200)
-  @UsePipes(ValidationPipe)
-  async login(@Body() userDto: UserDto) {
-    this.myLogger.log('login method');
-
-    try {
-      const secret = this.configService.get('config.secret');
-      const hashPass = createHmac('sha256', secret).update(userDto.password).digest('hex');
-
-      const user = await this.userService.getUserByName(userDto.username);
-      if (!user) {
-        throw '用户名不存在';
-      }
-
-      if (user.password !== hashPass) {
-        throw '密码错误';
-      }
-
-      const access_token = '';
-      const refresh_token = '';
-      return {
-        access_token,
-        refresh_token,
-        username: user.username,
-      };
-    } catch (error) {
       throw new BadRequestException(error);
     }
   }

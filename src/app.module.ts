@@ -5,6 +5,7 @@ import { UserModule } from './modules/user/user.module';
 import config from './config/config';
 import { MyMiddleware } from './middlewares/my.middleware';
 import { LoggerModule } from './logger/logger.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -35,7 +36,8 @@ import { LoggerModule } from './logger/logger.module';
       },
     }),
 
-    // 其他业务模块
+    // 其他业务模块，授权，用户，博客等
+    AuthModule,
     UserModule,
   ],
   controllers: [], // controllers：当前模块的控制器

@@ -19,5 +19,6 @@ import { LoggerModule } from 'src/logger/logger.module';
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService], // 导出供auth模块使用
 })
 export class UserModule {}
