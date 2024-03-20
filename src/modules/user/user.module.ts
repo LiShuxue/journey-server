@@ -3,7 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './user.schema';
-import { LoggerModule } from 'src/logger/logger.module';
+import { LoggerModule } from 'src/modules/logger/logger.module';
 
 // 通过@Module 装饰器将元数据附加到模块类中， Nest 可以轻松反射（reflect）出哪些控制器（controller）必须被安装
 @Module({

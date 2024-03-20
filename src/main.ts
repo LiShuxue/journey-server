@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { HttpInterceptor } from './interceptors/http.interceptor';
 import { HttpExceptionFilter } from './filters/httpException.filter';
-import { MyLoggerService } from './logger/logger.service';
+import { MyLoggerService } from './modules/logger/logger.service';
 
 /*
   Nestjs 是一个类似于Spring的框架。

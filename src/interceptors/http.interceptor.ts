@@ -1,7 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MyLoggerService } from 'src/logger/logger.service';
+import { MyLoggerService } from 'src/modules/logger/logger.service';
 
 // 拦截器也是使用 @Injectable() 装饰器的类。拦截器应该实现 NestInterceptor 接口，并且实现 intercept 方法。用来修改请求和响应。
 // 可以通过 @UseInterceptors 可以将拦截器使用在局部controller上，也可以通过 app.useGlobalInterceptors 使用在全局。

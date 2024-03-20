@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHmac } from 'node:crypto';
-import { MyLoggerService } from 'src/logger/logger.service';
+import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { UserDto } from 'src/modules/user/user.dto';
 import { User } from 'src/modules/user/user.schema';
 import { UserService } from 'src/modules/user/user.service';

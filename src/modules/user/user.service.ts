@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDto } from './user.dto';
 import { User } from './user.schema';
-import { MyLoggerService } from 'src/logger/logger.service';
+import { MyLoggerService } from 'src/modules/logger/logger.service';
 
 /*
   使用 @Injectable() 注解定义一个service。他是一个provider，所以可以通过 constructor 注入。可以做数据检索和存储等。

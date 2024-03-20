@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { MyLoggerService } from 'src/logger/logger.service';
+import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 

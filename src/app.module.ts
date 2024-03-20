@@ -4,8 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import config from './config/config';
 import { MyMiddleware } from './middlewares/my.middleware';
-import { LoggerModule } from './logger/logger.module';
-import { AuthModule } from './auth/auth.module';
+import { LoggerModule } from './modules/logger/logger.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块

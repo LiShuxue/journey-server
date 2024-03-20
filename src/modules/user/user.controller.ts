@@ -11,9 +11,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/modules/auth/auth.guard';
 import { UserDto } from './user.dto';
-import { MyLoggerService } from 'src/logger/logger.service';
+import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { createHmac } from 'node:crypto';
 import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
