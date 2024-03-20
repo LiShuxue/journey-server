@@ -43,6 +43,22 @@ async function bootstrap() {
   // 获取全局配置，这个service是由 @nestjs/config 库提供
   const configService = app.get(ConfigService);
   const port = configService.get('config.port');
+
+  // 使用 enableCors() 方法来启用 CORS
+  app.enableCors({
+    origin: (origin, callback) => {
+      if (process.env.NODE_ENV !== 'production') {
+        // 在开发环境中允许所有来源
+        callback(null, '*');
+      } else {
+        // 在生产环境中允许指定的来源
+        callback(null, 'https://lishuxue.site');
+      }
+    },
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],
+  });
+
   await app.listen(port);
 }
 
