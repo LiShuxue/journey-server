@@ -5,23 +5,42 @@ import { MyLoggerService } from 'src/logger/logger.service';
 import { UserDto } from 'src/modules/user/user.dto';
 import { User } from 'src/modules/user/user.schema';
 import { UserService } from 'src/modules/user/user.service';
+import { JwtService } from '@nestjs/jwt';
+
+interface Payload {
+  iss?: string;
+  sub?: string;
+  aud?: string;
+  iat?: number;
+  exp?: number;
+  target?: string;
+  username?: string;
+}
 
 @Injectable()
 export class AuthService {
+  private initPayload: Payload;
+  private secret: string;
+
   constructor(
     private readonly myLogger: MyLoggerService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {
     this.myLogger.setContext('AuthService');
+    this.initPayload = {
+      iss: 'Journey', // (Issuer) jwt签发者
+      sub: 'lishuxue.site', // (Subject) 该jwt所面向的用户
+      aud: 'lishuxue.site', // (Audience) 接收jwt的一方
+    };
+    this.secret = this.configService.get('config.secret');
   }
 
   async signIn(signInDto: UserDto): Promise<User> {
     this.myLogger.log('signIn method');
 
-    const secret = this.configService.get('config.secret');
-    const hashPass = createHmac('sha256', secret).update(signInDto.password).digest('hex');
-
+    const hashPass = createHmac('sha256', this.secret).update(signInDto.password).digest('hex');
     const user = await this.userService.getUserByName(signInDto.username);
     if (!user) {
       throw '用户名不存在';
@@ -32,5 +51,26 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  createAccessToken(payload: Payload) {
+    this.myLogger.log('createAccessToken method');
+    const t_payload: Payload = Object.assign({}, this.initPayload, payload); // Object.assign(target, ...sources)
+    t_payload.iat = Math.floor(Date.now() / 1000); // jwt的签发时间，单位秒s
+    t_payload.exp = Math.floor(Date.now() / 1000) + 5 * 60; // jwt的过期时间，单位秒s，5分钟
+
+    return this.jwtService.sign(t_payload);
+  }
+
+  createRefreshToken(payload: Payload) {
+    this.myLogger.log('createRefreshToken method');
+    const t_payload: Payload = {
+      target: 'refresh',
+      ...payload,
+    };
+    t_payload.iat = Math.floor(Date.now() / 1000);
+    t_payload.exp = Math.floor(Date.now() / 1000) + 5 * 60 * 60; // 单位秒s，5个小时
+
+    return this.jwtService.sign(t_payload);
   }
 }

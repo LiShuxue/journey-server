@@ -29,8 +29,9 @@ export class AuthController {
 
     try {
       const user = await this.authService.signIn(signInDto);
-      const access_token = '';
-      const refresh_token = '';
+      const payload = { username: user.username };
+      const access_token = await this.authService.createAccessToken(payload);
+      const refresh_token = await this.authService.createRefreshToken(payload);
       return {
         access_token,
         refresh_token,
