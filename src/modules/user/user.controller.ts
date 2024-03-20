@@ -31,6 +31,8 @@ import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
 @Controller('user')
 @UseGuards(AuthGuard)
 export class UserController {
+  private secret: string;
+
   // 当控制器被实例化的时候，UserService会被注入，自动实例化userService（默认是单例的，如果已经存在，直接返回）
   constructor(
     private readonly userService: UserService,
@@ -38,6 +40,7 @@ export class UserController {
     private readonly configService: ConfigService,
   ) {
     this.myLogger.setContext('UserController');
+    this.secret = this.configService.get('config.secret');
   }
 
   @Post('create')
@@ -47,8 +50,7 @@ export class UserController {
     this.myLogger.log('createUser method');
 
     try {
-      const secret = this.configService.get('config.secret');
-      const hashPass = createHmac('sha256', secret).update(userDto.password).digest('hex');
+      const hashPass = createHmac('sha256', this.secret).update(userDto.password).digest('hex');
 
       const newUserDto = {
         username: userDto.username,
@@ -103,8 +105,7 @@ export class UserController {
     this.myLogger.log('updateUser method');
 
     try {
-      const secret = this.configService.get('config.secret');
-      const hashPass = createHmac('sha256', secret).update(userDto.password).digest('hex');
+      const hashPass = createHmac('sha256', this.secret).update(userDto.password).digest('hex');
 
       const newUserDto = {
         username: userDto.username,

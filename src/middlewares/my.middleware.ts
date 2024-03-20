@@ -10,10 +10,14 @@ export class MyMiddleware implements NestMiddleware {
     this.myLogger.setContext('MyMiddleware');
   }
   use(req: Request, res: Response, next: NextFunction) {
+    this.myLogger.log('请求开始================================================');
     this.myLogger.log(
-      'MyMiddleware: 请求流动顺序：中间件 -> 守卫 —> req拦截器 -> 管道 -> 控制器 -> service -> res拦截器 -> 异常过滤器',
+      '请求流动顺序：中间件 -> 守卫 —> req拦截器 -> 管道 -> 控制器 -> service -> res拦截器 -> 异常过滤器',
     );
 
+    res.on('finish', () => {
+      this.myLogger.log('请求结束================================================');
+    });
     // 调用下一个中间件或路由处理程序
     next();
   }
