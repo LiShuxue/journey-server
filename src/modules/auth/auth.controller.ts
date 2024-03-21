@@ -30,11 +30,11 @@ export class AuthController {
     try {
       const user = await this.authService.signIn(signInDto);
       const payload = { username: user.username };
-      const access_token = this.authService.createAccessToken(payload);
-      const refresh_token = this.authService.createRefreshToken(payload);
+      const accessToken = this.authService.createAccessToken(payload);
+      const refreshToken = this.authService.createRefreshToken(payload);
       return {
-        access_token,
-        refresh_token,
+        accessToken,
+        refreshToken,
         username: user.username,
       };
     } catch (error) {

@@ -73,4 +73,39 @@ export class AuthService {
 
     return this.jwtService.sign(t_payload);
   }
+
+  verifyToken(accessToken, refreshToken) {
+    let newToken;
+    try {
+      this.myLogger.log('verifyToken accessToken');
+      this.jwtService.verify(accessToken);
+      // 验证结果和新的token
+      return [true, newToken];
+    } catch (error) {
+      // 过期以后，用refreshToken
+      if (error.name === 'TokenExpiredError') {
+        try {
+          this.myLogger.log('verifyToken refreshToken');
+          this.jwtService.verify(refreshToken);
+        } catch (error) {
+          throw 'Refresh token invalid';
+        }
+
+        newToken = this.generateNewToken(refreshToken);
+        // 验证结果和新的token
+        return [true, newToken];
+      }
+
+      throw 'Access token invalid';
+    }
+  }
+
+  private generateNewToken(refreshToken: string) {
+    this.myLogger.log('generateNewToken');
+    const decoded = this.jwtService.decode(refreshToken);
+    const payload = { username: decoded.username };
+    const newAccessToken = this.createAccessToken(payload);
+    const newRefreshToken = this.createRefreshToken(payload);
+    return { newAccessToken, newRefreshToken };
+  }
 }

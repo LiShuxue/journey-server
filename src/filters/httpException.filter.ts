@@ -1,5 +1,4 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
-import { Response } from 'express';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
 
 // 过滤器（Filters）是用于处理异常的组件，它们允许您在应用程序中统一处理抛出的异常，以提供更友好和一致的错误响应。通常是使用 @Catch() 装饰器进行注解的类。
@@ -12,7 +11,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   catch(exception: HttpException, host: ArgumentsHost) {
     // 在这里处理异常并返回响应
-    const response = host.switchToHttp().getResponse<Response>();
+    const response = host.switchToHttp().getResponse();
     const httpStatus = exception.getStatus();
     const exceptionRes: any = exception.getResponse();
 

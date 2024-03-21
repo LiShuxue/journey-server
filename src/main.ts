@@ -51,6 +51,7 @@ async function bootstrap() {
     },
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],
+    exposedHeaders: ['new-access-token', 'new-refresh-token'],
   });
 
   // 获取全局配置，这个service是由 @nestjs/config 库提供
