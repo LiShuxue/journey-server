@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config';
 
 // 守卫在中间件之后执行，或在任何拦截器或管道之前执行。一般用来做鉴权，来确定请求是否可以继续。
 // 守卫也是一个使用 @Injectable() 装饰器的类。守卫必须实现一个 canActivate() 函数，此函数应该返回一个布尔值，用于指示是否允许当前请求。
@@ -10,6 +11,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly myLogger: MyLoggerService,
     private readonly authService: AuthService,
+    private readonly configService: ConfigService,
   ) {
     this.myLogger.setContext('AuthGuard');
   }
@@ -19,6 +21,14 @@ export class AuthGuard implements CanActivate {
 
     try {
       const request = context.switchToHttp().getRequest();
+
+      // 对于不需要鉴权的接口，直接返回true
+      const publicApi = this.configService.get('config.publicApi') || [];
+      if (publicApi.includes(request.url)) {
+        return true;
+      }
+
+      // 获取token
       const { accessToken, refreshToken } = this.extractTokenFromHeader(request);
       if (!accessToken) {
         throw '请求头中没有accessToken';
@@ -27,9 +37,11 @@ export class AuthGuard implements CanActivate {
         throw '请求头中没有refreshToken';
       }
 
+      // 验证token
       const [result, newToken] = this.authService.verifyToken(accessToken, refreshToken);
       if (newToken) {
         const { newAccessToken, newRefreshToken } = newToken;
+        // 将response header中设置新的token
         context.switchToHttp().getResponse().setHeader('new-access-token', newAccessToken);
         context.switchToHttp().getResponse().setHeader('new-refresh-token', newRefreshToken);
       }
@@ -40,6 +52,7 @@ export class AuthGuard implements CanActivate {
     }
   }
 
+  // 从request中获取token
   private extractTokenFromHeader(request) {
     const [type, accessToken] = request.headers.authorization?.split(' ') ?? [];
     const refreshToken = request.headers['refresh-token'] ?? '';

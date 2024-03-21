@@ -2,8 +2,8 @@ import { registerAs } from '@nestjs/config';
 
 // 配置管理，值可以从.env或者.yaml文件中获取
 export default registerAs('config', () => ({
-  port: 4000,
-  secret: 'journey-secret-key',
+  port: 4000, // 运行端口
+  secret: 'journey-secret-key', // 加密密钥
   db: {
     // journey db，业务DB
     journey: {
@@ -22,4 +22,6 @@ export default registerAs('config', () => ({
       database: 'admin',
     },
   },
+  // 不需要鉴权就可以访问的api接口
+  publicApi: ['/auth/login'],
 }));

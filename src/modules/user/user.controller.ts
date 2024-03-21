@@ -4,14 +4,12 @@ import {
   Controller,
   Get,
   HttpCode,
+  InternalServerErrorException,
   Post,
-  ServiceUnavailableException,
-  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard } from 'src/modules/auth/auth.guard';
 import { UserDto } from './user.dto';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
@@ -29,7 +27,6 @@ import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
   @Get('list') 中的 / 可加可不加，他是相对控制器根路径user的绝对或者相对。
 */
 @Controller('user')
-@UseGuards(AuthGuard)
 export class UserController {
   private secret: string;
 
@@ -76,7 +73,7 @@ export class UserController {
       const userList = await this.userService.getUserList();
       return userList;
     } catch (error) {
-      throw new ServiceUnavailableException(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
