@@ -6,6 +6,9 @@ import config from './config/config';
 import { MyMiddleware } from './middlewares/my.middleware';
 import { LoggerModule } from './modules/logger/logger.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpInterceptor } from './interceptors/http.interceptor';
+import { HttpExceptionFilter } from './filters/httpException.filter';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -41,7 +44,16 @@ import { AuthModule } from './modules/auth/auth.module';
     UserModule,
   ],
   controllers: [], // controllers：当前模块的控制器
-  providers: [], // providers：当前模块中提供的服务（一般是service）、提供者和其他可注入的对象
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpInterceptor, // 全局注册您的拦截器
+    },
+    {
+      provide: APP_FILTER, // 就依赖项注入而言，从任何模块外部注册的全局过滤器（如useGlobalFilters()）无法注入依赖项，可以使用该结构直接从任何模块注册全局范围的过滤器
+      useClass: HttpExceptionFilter, // 全局注册您的过滤器
+    },
+  ], // providers：当前模块中提供的服务（一般是service）、提供者和其他可注入的对象
   exports: [], // 将当前模块的controller或者service导出，其他模块才可以导入当前模块，并使用该导入模块的controller和service
 })
 export class AppModule implements NestModule {

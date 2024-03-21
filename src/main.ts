@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { HttpInterceptor } from './interceptors/http.interceptor';
-import { HttpExceptionFilter } from './filters/httpException.filter';
 import { MyLoggerService } from './modules/logger/logger.service';
 
 /*
@@ -34,15 +32,11 @@ async function bootstrap() {
   // 替换 app 默认的日志输出为自己的日志输出
   app.useLogger(new MyLoggerService());
 
-  // 全局使用拦截器
-  app.useGlobalInterceptors(new HttpInterceptor(new MyLoggerService()));
+  // 全局使用拦截器，但无法依赖注入
+  // app.useGlobalInterceptors(new HttpInterceptor());
 
-  // 全局使用过滤器
-  app.useGlobalFilters(new HttpExceptionFilter(new MyLoggerService()));
-
-  // 获取全局配置，这个service是由 @nestjs/config 库提供
-  const configService = app.get(ConfigService);
-  const port = configService.get('config.port');
+  // 全局使用过滤器，但无法依赖注入
+  // app.useGlobalFilters(new HttpExceptionFilter());
 
   // 使用 enableCors() 方法来启用 CORS
   app.enableCors({
@@ -58,6 +52,10 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],
   });
+
+  // 获取全局配置，这个service是由 @nestjs/config 库提供
+  const configService = app.get(ConfigService);
+  const port = configService.get('config.port');
 
   await app.listen(port);
 }

@@ -1,10 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpCode,
   HttpStatus,
   Post,
-  UnauthorizedException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -30,15 +30,15 @@ export class AuthController {
     try {
       const user = await this.authService.signIn(signInDto);
       const payload = { username: user.username };
-      const access_token = await this.authService.createAccessToken(payload);
-      const refresh_token = await this.authService.createRefreshToken(payload);
+      const access_token = this.authService.createAccessToken(payload);
+      const refresh_token = this.authService.createRefreshToken(payload);
       return {
         access_token,
         refresh_token,
         username: user.username,
       };
     } catch (error) {
-      throw new UnauthorizedException(error);
+      throw new BadRequestException(error);
     }
   }
 }

@@ -21,6 +21,8 @@ export class HttpInterceptor implements NestInterceptor {
     };
     this.myLogger.log('request: ' + JSON.stringify(loginfo));
     this.myLogger.log('request headers: ' + JSON.stringify(request.headers));
+    // request中获取特定的header
+    // const token = request.headers['refresh-token'] ?? '';
 
     return next.handle().pipe(
       // next.handle() 返回一个 Observable，此流包含从路由处理程序返回的值（响应）, 我们可以使用 map() 运算符对其进行改变。
