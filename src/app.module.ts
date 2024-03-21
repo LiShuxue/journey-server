@@ -10,6 +10,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpInterceptor } from './interceptors/http.interceptor';
 import { HttpExceptionFilter } from './filters/httpException.filter';
 import { AuthGuard } from './modules/auth/auth.guard';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -40,6 +41,17 @@ import { AuthGuard } from './modules/auth/auth.guard';
       },
     }),
 
+    // 限流操作，使用@nestjs/throttler包，可以使用@SkipThrottle()跳过限流，@Throttle()装饰器可用于覆盖全局模块中的设置。配置以后，需要全局使用ThrottlerGuard
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => [
+        {
+          ttl: configService.get('config.throttler_ttl'),
+          limit: configService.get('config.throttler_limit'),
+        },
+      ],
+    }),
+
     // 其他业务模块，授权，用户，博客等
     AuthModule,
     UserModule,
@@ -53,6 +65,10 @@ import { AuthGuard } from './modules/auth/auth.guard';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter, // 全局注册您的过滤器
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard, // 限流守卫。多个守卫应该分开写，按先后顺序执行。
     },
     {
       provide: APP_GUARD,

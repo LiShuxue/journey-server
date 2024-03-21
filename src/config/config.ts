@@ -24,4 +24,7 @@ export default registerAs('config', () => ({
   },
   // 不需要鉴权就可以访问的api接口
   publicApi: ['/auth/login'],
+  // 接口限流配置，1分钟最多30次请求
+  throttler_ttl: 1000 * 60,
+  throttler_limit: 30,
 }));
