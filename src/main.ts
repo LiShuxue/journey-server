@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { MyLoggerService } from './modules/logger/logger.service';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 /*
   Nestjs 是一个类似于Spring的框架。
@@ -24,10 +25,14 @@ import { MyLoggerService } from './modules/logger/logger.service';
 
 // main.ts 是应用程序入口文件。负责引导我们的应用程序
 async function bootstrap() {
-  // 使用 NestFactory 用来创建 Nest 应用实例。
-  const app = await NestFactory.create(AppModule, {
+  // 使用 NestFactory 用来创建 Nest 应用实例，基于Express。一般不需要指定Express，但是因为我们要app.set('trust proxy', true)，这是express特有的。
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
+  // 获取全局配置，这个service是由 @nestjs/config 库提供
+  const configService = app.get(ConfigService);
+  const port = configService.get('config.port');
+  const trustProxy = configService.get('config.trustProxy');
 
   // 替换 app 默认的日志输出为自己的日志输出
   app.useLogger(new MyLoggerService());
@@ -54,9 +59,9 @@ async function bootstrap() {
     exposedHeaders: ['new-access-token', 'new-refresh-token'],
   });
 
-  // 获取全局配置，这个service是由 @nestjs/config 库提供
-  const configService = app.get(ConfigService);
-  const port = configService.get('config.port');
+  // 服务运行在代理之后，所以需要信任代理地址，这样才能拿到真实的客户端IP
+  // 设置为 true 时，Express 会信任所有的代理头信息，而在设置为特定的 IP 地址时，Express 只信任来自指定 IP 地址的代理头信息。
+  app.set('trust proxy', trustProxy);
 
   await app.listen(port);
 }

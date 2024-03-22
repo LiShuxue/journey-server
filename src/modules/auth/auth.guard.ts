@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate {
       const [result, newToken] = this.authService.verifyToken(accessToken, refreshToken);
       if (newToken) {
         const { newAccessToken, newRefreshToken } = newToken;
-        // 将response header中设置新的token
+        // 通过response。setHeader()，将response header中设置新的token
         context.switchToHttp().getResponse().setHeader('new-access-token', newAccessToken);
         context.switchToHttp().getResponse().setHeader('new-refresh-token', newRefreshToken);
       }

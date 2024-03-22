@@ -22,7 +22,14 @@ export class HttpInterceptor implements NestInterceptor {
     this.myLogger.log('request: ' + JSON.stringify(loginfo));
     this.myLogger.log('request headers: ' + JSON.stringify(request.headers));
     // request中获取特定的header
-    // const token = request.headers['refresh-token'] ?? '';
+    // IP地址 "::1" 是IPv6协议下的环回地址，它等同于IPv4中的 "127.0.0.1"。当你在本地机器上进行网络请求测试时，这个地址用来指向你自己的计算机。
+    // IP地址是 172.18.0.2/16 或者 172.19...，172.20...，是docker bridge网络地址。
+    const ips = {
+      ip: request.ip,
+      'x-forwarded-for': request.headers['x-forwarded-for'],
+      'x-real-ip': request.headers['x-real-ip'],
+    };
+    this.myLogger.log('ips: ' + JSON.stringify(ips));
 
     return next.handle().pipe(
       // next.handle() 返回一个 Observable，此流包含从路由处理程序返回的值（响应）, 我们可以使用 map() 运算符对其进行改变。
@@ -36,9 +43,6 @@ export class HttpInterceptor implements NestInterceptor {
         };
         this.myLogger.log('response: ' + JSON.stringify(body));
         this.myLogger.log('response headers: ' + JSON.stringify(response.getHeaders()));
-
-        // 可以在这里通过response.header重新设置header，设置的header需要在cors中的exposeHeaders中加上
-        // response.header('xxx', 'xxx');
 
         // 返回转换后的body数据
         return body;
