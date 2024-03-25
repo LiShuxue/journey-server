@@ -58,6 +58,9 @@ async function bootstrap() {
   // 设置为 true 时，Express 会信任所有的代理头信息，而在设置为特定的 IP 地址时，Express 只信任来自指定 IP 地址的代理头信息。
   app.set('trust proxy', trustProxy);
 
+  // 为所有接口设置公共前缀
+  app.setGlobalPrefix('blog-api');
+
   await app.listen(port);
 }
 
