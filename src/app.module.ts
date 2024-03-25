@@ -28,11 +28,11 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const host = configService.get('config.db.journey.host');
-        const port = configService.get('config.db.journey.port');
-        const username = configService.get('config.db.journey.username');
-        const password = configService.get('config.db.journey.password');
-        const database = configService.get('config.db.journey.database');
+        const host = configService.get('db.journey.host');
+        const port = configService.get('db.journey.port');
+        const username = configService.get('db.journey.username');
+        const password = configService.get('db.journey.password');
+        const database = configService.get('db.journey.database');
         const uri = `mongodb://${username}:${password}@${host}:${port}/${database}`;
 
         return {
@@ -46,8 +46,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => [
         {
-          ttl: configService.get('config.throttler_ttl'),
-          limit: configService.get('config.throttler_limit'),
+          ttl: configService.get('throttler_ttl'),
+          limit: configService.get('throttler_limit'),
         },
       ],
     }),

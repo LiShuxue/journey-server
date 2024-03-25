@@ -34,7 +34,7 @@ export class AuthService {
       sub: 'lishuxue.site', // (Subject) 该jwt所面向的用户
       aud: 'lishuxue.site', // (Audience) 接收jwt的一方
     };
-    this.secret = this.configService.get('config.secret');
+    this.secret = this.configService.get('secret');
   }
 
   async signIn(signInDto: UserDto): Promise<User> {

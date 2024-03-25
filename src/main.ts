@@ -31,8 +31,8 @@ async function bootstrap() {
   });
   // 获取全局配置，这个service是由 @nestjs/config 库提供
   const configService = app.get(ConfigService);
-  const port = configService.get('config.port');
-  const trustProxy = configService.get('config.trustProxy');
+  const port = configService.get('port');
+  const trustProxy = configService.get('trustProxy');
 
   // 替换 app 默认的日志输出为自己的日志输出
   app.useLogger(new MyLoggerService());

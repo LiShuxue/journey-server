@@ -37,7 +37,7 @@ export class UserController {
     private readonly configService: ConfigService,
   ) {
     this.myLogger.setContext('UserController');
-    this.secret = this.configService.get('config.secret');
+    this.secret = this.configService.get('secret');
   }
 
   @Post('create')
