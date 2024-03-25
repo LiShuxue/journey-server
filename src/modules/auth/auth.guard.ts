@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
 
       // 对于不需要鉴权的接口，直接返回true
       const publicApi = this.configService.get('publicApi') || [];
-      if (publicApi.includes(request.url)) {
+      if (publicApi.includes(request.url) || publicApi === '*') {
         return true;
       }
 
