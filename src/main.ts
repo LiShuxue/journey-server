@@ -33,6 +33,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('port');
   const trustProxy = configService.get('trustProxy');
+  const allowOrigin = configService.get('allowOrigin');
 
   // 替换 app 默认的日志输出为自己的日志输出
   app.useLogger(new MyLoggerService());
@@ -46,13 +47,7 @@ async function bootstrap() {
   // 使用 enableCors() 方法来启用 CORS
   app.enableCors({
     origin: (origin, callback) => {
-      if (process.env.NODE_ENV !== 'production') {
-        // 在开发环境中允许所有来源
-        callback(null, '*');
-      } else {
-        // 在生产环境中允许指定的来源
-        callback(null, 'https://lishuxue.site');
-      }
+      callback(null, allowOrigin);
     },
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'refresh-token'],

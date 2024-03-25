@@ -2,15 +2,18 @@
 port: 4000
 
 # 加密密钥
-secret: journey-secret-key
+secret: 'journey-secret-key'
 
 # DB信息
 db: {
     # journey db，业务DB
-    journey: { host: '47.93.18.226', port: '27017', username: 'journey', password: 'journey', database: 'journey' },
+    journey: { host: 'localhost', port: '27017', username: 'journey', password: 'journey', database: 'journey' },
     # admin db，数据库管理员DB
-    admin: { host: '47.93.18.226', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
+    admin: { host: 'localhost', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
   }
+
+# CORS 允许的域名
+allowOrigin: 'https://lishuxue.site'
 
 # 不需要鉴权就可以访问的api接口
 publicApi: ['/auth/login']

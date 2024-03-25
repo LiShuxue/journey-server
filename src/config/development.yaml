@@ -12,6 +12,9 @@ db: {
     admin: { host: 'localhost', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
   }
 
+# CORS 允许的域名
+allowOrigin: '*'
+
 # 不需要鉴权就可以访问的api接口
 publicApi: '*'
 

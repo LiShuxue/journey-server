@@ -3,10 +3,9 @@
   "scripts": {
     "mongodb": "cd /Users/lishuxue/Documents/study/journey/journey-docker && docker compose -f docker-compose.dev.yml up -d journey-mongodb",
     "mongodb-down": "cd /Users/lishuxue/Documents/study/journey/journey-docker && docker compose -f docker-compose.dev.yml down journey-mongodb",
-    "start": "NODE_ENV=development nest start",
-    "start:dev": "NODE_ENV=development nest start --watch",
-    "start:debug": "NODE_ENV=development nest start --debug --watch",
-    "start:prod": "NODE_ENV=production node dist/main",
+    "dev": "NODE_ENV=development nest start --watch",
+    "debug": "NODE_ENV=development nest start --debug --watch",
+    "prod": "nest build && NODE_ENV=production node dist/main",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix",

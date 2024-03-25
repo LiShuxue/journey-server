@@ -10,7 +10,7 @@ export class MyLoggerService implements LoggerService {
   constructor() {
     let transport = [];
     // 生产环境，输出到文件
-    if (process.env.NODE_ENV === 'producion') {
+    if (process.env.NODE_ENV === 'production') {
       transport = [
         new transports.DailyRotateFile({
           // 日志文件文件夹，建议使用path.join()方式来处理，或者process.cwd()来设置，此处仅作示范
