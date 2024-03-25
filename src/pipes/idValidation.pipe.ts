@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
 import * as mongoose from 'mongoose';
 
@@ -11,7 +11,7 @@ export class IdValidationPipe implements PipeTransform {
   constructor(private readonly myLogger: MyLoggerService) {
     this.myLogger.setContext('IdValidationPipe');
   }
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any) {
     this.myLogger.log('IdValidationPipe: ' + value);
 
     // 在这里进行数据验证或转换
