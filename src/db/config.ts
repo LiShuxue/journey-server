@@ -9,13 +9,13 @@ interface DBConfig {
 
 const db_config: DBConfig = {
   db: 'journey',
-  host: 'localhost',
+  host: process.env.NODE_ENV === 'production' ? 'journey-mongodb' : 'localhost',
   port: 27017,
   username: 'journey', // admin db: lishuxue/lishuxue
   password: 'journey',
   admin: {
     db: 'admin',
-    host: 'localhost',
+    host: process.env.NODE_ENV === 'production' ? 'journey-mongodb' : 'localhost',
     port: 27017,
     username: 'lishuxue',
     password: 'lishuxue',
