@@ -54,7 +54,7 @@ jobs:
           source: 'dist'
           target: '/root/project/journey/journey-server' # 代码部署路径
 
-      - name: docker stop admin # 停止服务
+      - name: docker stop journey-server # 停止服务
         uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
         with:
           command: cd /root/project/journey/journey-docker && docker compose down journey-server
@@ -62,7 +62,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
 
-      - name: docker start admin && nginx # 启动服务
+      - name: docker start journey-server # 启动服务
         uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
         with:
           command: cd /root/project/journey/journey-docker && docker compose up -d journey-server
