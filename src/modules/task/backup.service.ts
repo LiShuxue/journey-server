@@ -24,41 +24,43 @@ export class BackupService {
   @Cron('0 0 4 * * 3,5')
   async dbBackup() {
     try {
-      const isBackup = this.configService.get('db.backup');
-      if (isBackup) {
-        this.myLogger.log('db backup task start');
-        // 备份数据库
-        // docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue
-        const dbConfig = this.configService.get('db.admin');
-        const shell = `docker exec journey-mongodb mongodump -h ${dbConfig.host}:${dbConfig.port} -d journey -o /backup --authenticationDatabase ${dbConfig.database} -u ${dbConfig.username} -p ${dbConfig.password}`;
-        const execPromise = promisify(exec);
-        await execPromise(shell);
-
-        // 更改进程的当前工作目录
-        const dbBackupPath = '/Users/lishuxue/Documents/software/mongodb/backup';
-        process.chdir(dbBackupPath);
-
-        // 压缩数据库备份文件
-        const now = Date.now();
-        const time = dayjs(now).format('YYYY-MM-DD-HH-mm');
-        const fileName = `DB-journey-${time}.zip`;
-        await execPromise(`zip -r ${fileName} journey`);
-
-        // 上传至七牛云
-        const qiniuPath = 'blog/mongodb/' + fileName;
-        const sourceFilePath = `${dbBackupPath}/${fileName}`;
-        await this.qiniuService.localFileUpload(qiniuPath, sourceFilePath);
-
-        this.myLogger.log('start remove old backup');
-        // 每次bucket上总是保留10个。因为每周备份两次，所以相当于备份了5周的。
-        // 删除旧的文件，所以是删除5周之前的那个。
-        const old = now - 1000 * 60 * 60 * 24 * 7 * 5;
-        const oldTime = dayjs(old).format('YYYY-MM-DD-HH-mm');
-        const oldFileName = `DB-journey-${oldTime}.zip`;
-        await execPromise(`rm -rf ${oldFileName}`);
-        const oldQiniuPath = 'blog/mongodb/' + oldFileName;
-        await this.qiniuService.deleteFileFromQiniu(oldQiniuPath);
+      const backupEnable = this.configService.get('db.backupEnable');
+      if (!backupEnable) {
+        return;
       }
+
+      this.myLogger.log('db backup task start');
+      // 备份数据库
+      // docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue
+      const dbConfig = this.configService.get('db.admin');
+      const shell = `docker exec journey-mongodb mongodump -h ${dbConfig.host}:${dbConfig.port} -d journey -o /backup --authenticationDatabase ${dbConfig.database} -u ${dbConfig.username} -p ${dbConfig.password}`;
+      const execPromise = promisify(exec);
+      await execPromise(shell);
+
+      // 更改进程的当前工作目录
+      const dbBackupPath = '/Users/lishuxue/Documents/software/mongodb/backup';
+      process.chdir(dbBackupPath);
+
+      // 压缩数据库备份文件
+      const now = Date.now();
+      const time = dayjs(now).format('YYYY-MM-DD-HH-mm');
+      const fileName = `DB-journey-${time}.zip`;
+      await execPromise(`zip -r ${fileName} journey`);
+
+      // 上传至七牛云
+      const qiniuPath = 'blog/mongodb/' + fileName;
+      const sourceFilePath = `${dbBackupPath}/${fileName}`;
+      await this.qiniuService.localFileUpload(qiniuPath, sourceFilePath);
+
+      this.myLogger.log('start remove old backup');
+      // 每次bucket上总是保留10个。因为每周备份两次，所以相当于备份了5周的。
+      // 删除旧的文件，所以是删除5周之前的那个。
+      const old = now - 1000 * 60 * 60 * 24 * 7 * 5;
+      const oldTime = dayjs(old).format('YYYY-MM-DD-HH-mm');
+      const oldFileName = `DB-journey-${oldTime}.zip`;
+      await execPromise(`rm -rf ${oldFileName}`);
+      const oldQiniuPath = 'blog/mongodb/' + oldFileName;
+      await this.qiniuService.deleteFileFromQiniu(oldQiniuPath);
     } catch (err) {
       this.myLogger.error('db backup error: ' + err.message);
     }

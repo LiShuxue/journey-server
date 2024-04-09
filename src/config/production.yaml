@@ -11,7 +11,7 @@ db: {
     # admin db，数据库管理员DB
     admin: { host: 'localhost', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
     # 是否开启备份
-    backup: true,
+    backupEnable: true,
   }
 
 # CORS 允许的域名
