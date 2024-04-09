@@ -38,7 +38,7 @@ export class BackupService {
       await execPromise(shell);
 
       // 更改进程的当前工作目录
-      const dbBackupPath = '/Users/lishuxue/Documents/software/mongodb/backup';
+      const dbBackupPath = this.configService.get('db.backupPath');
       process.chdir(dbBackupPath);
 
       // 压缩数据库备份文件

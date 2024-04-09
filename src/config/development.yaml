@@ -12,6 +12,8 @@ db: {
     admin: { host: 'localhost', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
     # 是否开启备份
     backupEnable: false,
+    # 备份文件的路径
+    backupPath: '/Users/lishuxue/Documents/software/mongodb/backup',
   }
 
 # CORS 允许的域名
