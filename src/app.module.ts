@@ -11,13 +11,16 @@ import { HttpInterceptor } from './interceptors/http.interceptor';
 import { HttpExceptionFilter } from './filters/httpException.filter';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './modules/task/task.module';
+import { QiniuModule } from './modules/qiniu/qiniu.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块
   imports: [
     // 使用 @nestjs/config 做配置管理，加载不同的配置文件，作为全局模式。在别的地方通过 this.configService.get('xxx.yyy') 来获取配置
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, // 其他模块使用的时候，无需import，可以直接注入到service
       load: [config],
     }),
 
@@ -28,12 +31,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const host = configService.get('db.journey.host');
-        const port = configService.get('db.journey.port');
-        const username = configService.get('db.journey.username');
-        const password = configService.get('db.journey.password');
-        const database = configService.get('db.journey.database');
-        const uri = `mongodb://${username}:${password}@${host}:${port}/${database}`;
+        const dbConfig = configService.get('db.journey');
+        const uri = `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`;
 
         return {
           uri,
@@ -51,6 +50,13 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         },
       ],
     }),
+
+    // 引入定时任务的功能，引入定时任务的TaskModule
+    ScheduleModule.forRoot(),
+    TasksModule,
+
+    // 引入七牛模块，提供七牛云的上传和删除功能
+    QiniuModule,
 
     // 其他业务模块，授权，用户，博客等
     AuthModule,
