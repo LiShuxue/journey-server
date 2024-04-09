@@ -24,7 +24,7 @@ import { QiniuModule } from './modules/qiniu/qiniu.module';
       load: [config],
     }),
 
-    // 根模块使用日志模块，因为Middleware中需要注入
+    // 根模块使用日志模块，该模块是全局的
     LoggerModule,
 
     // 使用 MongooseModule 配置数据库，使用配置文件中的变量来连接数据库

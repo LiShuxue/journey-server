@@ -2,7 +2,7 @@ import { Logger, createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import { LoggerService, Injectable, Scope } from '@nestjs/common';
 
-@Injectable({ scope: Scope.TRANSIENT }) // Scope.TRANSIENT 确保我们在每个功能模块中都拥有唯一的实例MyLogger，而不是全局单例
+@Injectable({ scope: Scope.TRANSIENT }) // 虽然LoggerModule 是全局的，但是 Scope.TRANSIENT 确保我们在每个功能模块中都拥有唯一的实例MyLogger，而不是全局单例
 export class MyLoggerService implements LoggerService {
   private logger: Logger;
   private context: string;

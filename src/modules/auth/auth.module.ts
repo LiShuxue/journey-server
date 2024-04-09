@@ -1,12 +1,10 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from 'src/modules/user/user.module';
-import { LoggerModule } from 'src/modules/logger/logger.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-@Global() // 为了在AuthGuard中使用AuthService
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -17,7 +15,6 @@ import { ConfigService } from '@nestjs/config';
       }),
     }),
     UserModule,
-    LoggerModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
