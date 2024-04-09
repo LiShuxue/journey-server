@@ -40,7 +40,8 @@ export class AuthService {
   async signIn(signInDto: UserDto): Promise<User> {
     this.myLogger.log('signIn method');
 
-    const hashPass = createHmac('sha256', this.secret).update(signInDto.password).digest('hex');
+    const password = decodeURIComponent(atob(signInDto.password));
+    const hashPass = createHmac('sha256', this.secret).update(password).digest('hex');
     const user = await this.userService.getUserByName(signInDto.username);
     if (!user) {
       throw '用户名不存在';

@@ -47,7 +47,8 @@ export class UserController {
     this.myLogger.log('createUser method');
 
     try {
-      const hashPass = createHmac('sha256', this.secret).update(userDto.password).digest('hex');
+      const password = decodeURIComponent(atob(userDto.password));
+      const hashPass = createHmac('sha256', this.secret).update(password).digest('hex');
 
       const newUserDto = {
         username: userDto.username,
@@ -102,7 +103,8 @@ export class UserController {
     this.myLogger.log('updateUser method');
 
     try {
-      const hashPass = createHmac('sha256', this.secret).update(userDto.password).digest('hex');
+      const password = decodeURIComponent(atob(userDto.password));
+      const hashPass = createHmac('sha256', this.secret).update(password).digest('hex');
 
       const newUserDto = {
         username: userDto.username,
