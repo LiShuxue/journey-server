@@ -25,6 +25,7 @@ export class BackupService {
   // 每周三和周五的凌晨4点
   @Cron('0 0 4 * * 3,5')
   async dbBackup() {
+    this.myLogger.log('dbBackup method');
     try {
       const backupEnable = this.configService.get('db.backupEnable');
       if (!backupEnable) {
@@ -52,7 +53,7 @@ export class BackupService {
       // 上传至七牛云
       const qiniuPath = 'blog/mongodb/' + fileName;
       const sourceFilePath = `${dbBackupPath}/${fileName}`;
-      await this.qiniuService.localFileUpload(qiniuPath, sourceFilePath);
+      await this.qiniuService.uploadFile(qiniuPath, sourceFilePath);
 
       this.myLogger.log('start remove old backup');
       // 每次bucket上总是保留10个。因为每周备份两次，所以相当于备份了5周的。
@@ -62,9 +63,9 @@ export class BackupService {
       const oldFileName = `DB-journey-${oldTime}.zip`;
       await execPromise(`rm -rf ${oldFileName}`);
       const oldQiniuPath = 'blog/mongodb/' + oldFileName;
-      await this.qiniuService.deleteFileFromQiniu(oldQiniuPath);
+      await this.qiniuService.deleteFile(oldQiniuPath);
     } catch (err) {
-      this.myLogger.error('db backup error: ' + err.message);
+      this.myLogger.error('db backup error: ' + (err?.message || err));
     }
   }
 }

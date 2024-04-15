@@ -28,3 +28,6 @@ throttler_limit: 30
 
 # 设置为 true 时，Express 会信任所有的代理头信息，而在设置为特定的 IP 地址时，Express 只信任来自指定 IP 地址的代理头信息。
 trustProxy: ['47.93.18.226']
+
+# 所有本地项目存放的位置，用于上传功能
+projectPath: '/root/project'
