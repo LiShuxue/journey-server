@@ -7,6 +7,8 @@ export class QiniuService {
   private accessKey: string = 'uHIW2IbsCKWoeaEW3x5tX6ajX3xL010MmmWar5vC';
   private secretKey: string = 'BJzBW7iaoRMh370HdlWSI4gzjL9tbkn-J19uzedC';
   private bucket: string = 'journey';
+  public uploadDomain: string = 'https://upload-z1.qiniup.com/';
+  public downloadDomain: string = 'https://cdn.lishuxue.site/';
   private mac: qiniu.auth.digest.Mac;
   private formUploader: qiniu.form_up.FormUploader;
   private bucketManager: qiniu.rs.BucketManager;

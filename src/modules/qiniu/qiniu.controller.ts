@@ -14,9 +14,6 @@ import { ConfigService } from '@nestjs/config';
 
 @Controller('qiniu')
 export class QiniuController {
-  private uploadDomain: string = 'https://upload-z1.qiniup.com/';
-  private downloadDomain: string = 'https://cdn.lishuxue.site/';
-
   constructor(
     private readonly myLogger: MyLoggerService,
     private readonly qiniuService: QiniuService,
@@ -33,8 +30,8 @@ export class QiniuController {
       const token = this.qiniuService.getUploadToken(key) || '';
       const res = {
         qiniuUploadToken: token,
-        uploadDomain: this.uploadDomain,
-        downloadDomain: this.downloadDomain,
+        uploadDomain: this.qiniuService.uploadDomain,
+        downloadDomain: this.qiniuService.downloadDomain,
       };
       return res;
     } catch (error) {
