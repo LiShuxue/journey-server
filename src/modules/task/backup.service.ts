@@ -5,14 +5,14 @@ import { ConfigService } from '@nestjs/config';
 import { promisify } from 'node:util';
 import { exec } from 'node:child_process';
 import dayjs from 'dayjs';
-import { QiniuService } from '../qiniu/qiniu.service';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class BackupService {
   constructor(
     private readonly myLogger: MyLoggerService,
     private readonly configService: ConfigService,
-    private readonly qiniuService: QiniuService,
+    private readonly commonService: CommonService,
   ) {
     this.myLogger.setContext('BackupService');
   }
@@ -53,7 +53,7 @@ export class BackupService {
       // 上传至七牛云
       const qiniuPath = 'blog/mongodb/' + fileName;
       const sourceFilePath = `${dbBackupPath}/${fileName}`;
-      await this.qiniuService.uploadFile(qiniuPath, sourceFilePath);
+      await this.commonService.uploadFile(qiniuPath, sourceFilePath);
 
       this.myLogger.log('start remove old backup');
       // 每次bucket上总是保留10个。因为每周备份两次，所以相当于备份了5周的。
@@ -63,7 +63,7 @@ export class BackupService {
       const oldFileName = `DB-journey-${oldTime}.zip`;
       await execPromise(`rm -rf ${oldFileName}`);
       const oldQiniuPath = 'blog/mongodb/' + oldFileName;
-      await this.qiniuService.deleteFile(oldQiniuPath);
+      await this.commonService.deleteFile(oldQiniuPath);
     } catch (err) {
       this.myLogger.error('db backup error: ' + (err?.message || err));
     }

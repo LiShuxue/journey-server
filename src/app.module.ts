@@ -13,7 +13,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './modules/task/task.module';
-import { QiniuModule } from './modules/qiniu/qiniu.module';
+import { CommonModule } from './modules/common/common.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -55,8 +55,8 @@ import { QiniuModule } from './modules/qiniu/qiniu.module';
     ScheduleModule.forRoot(),
     TasksModule,
 
-    // 引入七牛模块，提供七牛云的上传和删除功能
-    QiniuModule,
+    // 引入通用模块，提供七牛云的上传和删除功能，以及获取天气功能
+    CommonModule,
 
     // 其他业务模块，授权，用户，博客等
     AuthModule,

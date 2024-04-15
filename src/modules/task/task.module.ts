@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { BackupService } from './backup.service';
-import { QiniuModule } from '../qiniu/qiniu.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
-  imports: [QiniuModule],
+  imports: [CommonModule],
   providers: [BackupService],
 })
 export class TasksModule {}

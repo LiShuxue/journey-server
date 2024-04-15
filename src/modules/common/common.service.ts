@@ -3,7 +3,7 @@ import { MyLoggerService } from 'src/modules/logger/logger.service';
 import qiniu from 'qiniu';
 
 @Injectable()
-export class QiniuService {
+export class CommonService {
   private accessKey: string = 'uHIW2IbsCKWoeaEW3x5tX6ajX3xL010MmmWar5vC';
   private secretKey: string = 'BJzBW7iaoRMh370HdlWSI4gzjL9tbkn-J19uzedC';
   private bucket: string = 'journey';
@@ -14,7 +14,7 @@ export class QiniuService {
   private bucketManager: qiniu.rs.BucketManager;
 
   constructor(private readonly myLogger: MyLoggerService) {
-    this.myLogger.setContext('QiniuService');
+    this.myLogger.setContext('CommonService');
 
     // 一些配置，如空间zone,https,cdn等
     const config = new qiniu.conf.Config();
@@ -39,7 +39,7 @@ export class QiniuService {
     return token;
   }
 
-  // 服务器本地文件，根据文件路径上传
+  // 服务器本地文件，根据文件路径上传至七牛云
   uploadFile(qiniuPath: string, sourceFilePath: string) {
     this.myLogger.log('uploadFile method');
 

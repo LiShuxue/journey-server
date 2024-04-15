@@ -9,17 +9,17 @@ import {
   Query,
 } from '@nestjs/common';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
-import { QiniuService } from './qiniu.service';
+import { CommonService } from './common.service';
 import { ConfigService } from '@nestjs/config';
 
-@Controller('qiniu')
-export class QiniuController {
+@Controller('common')
+export class CommonController {
   constructor(
     private readonly myLogger: MyLoggerService,
-    private readonly qiniuService: QiniuService,
+    private readonly commonService: CommonService,
     private readonly configService: ConfigService,
   ) {
-    this.myLogger.setContext('QiniuController');
+    this.myLogger.setContext('CommonController');
   }
 
   @Get('uploadToken')
@@ -27,11 +27,11 @@ export class QiniuController {
     this.myLogger.log('getUploadToken method');
 
     try {
-      const token = this.qiniuService.getUploadToken(key) || '';
+      const token = this.commonService.getUploadToken(key) || '';
       const res = {
         qiniuUploadToken: token,
-        uploadDomain: this.qiniuService.uploadDomain,
-        downloadDomain: this.qiniuService.downloadDomain,
+        uploadDomain: this.commonService.uploadDomain,
+        downloadDomain: this.commonService.downloadDomain,
       };
       return res;
     } catch (error) {
@@ -45,7 +45,7 @@ export class QiniuController {
     this.myLogger.log('deleteFile method');
 
     try {
-      const result = await this.qiniuService.deleteFile(filename);
+      const result = await this.commonService.deleteFile(filename);
       return result;
     } catch (error) {
       throw new BadRequestException(error);
@@ -65,7 +65,7 @@ export class QiniuController {
       const qiniuPath = project === 'blog-article' ? `blog/image/${fromPath}` : `resume/${fromPath}`;
       // 本地文件路径
       const sourceFilePath = `${path}/${fromPath}`;
-      const result = await this.qiniuService.uploadFile(qiniuPath, sourceFilePath);
+      const result = await this.commonService.uploadFile(qiniuPath, sourceFilePath);
       return result;
     } catch (error) {
       throw new BadRequestException(error);
