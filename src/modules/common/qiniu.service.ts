@@ -40,30 +40,27 @@ export class QiniuService {
   }
 
   // 服务器本地文件，根据文件路径上传至七牛云
-  uploadFile(qiniuPath: string, sourceFilePath: string) {
+  async uploadFile(qiniuPath: string, sourceFilePath: string) {
     this.myLogger.log('uploadFile method');
+    this.myLogger.log(`Start upload file to Qiniuyun, qiniuPath: ${qiniuPath}, sourceFilePath: ${sourceFilePath}`);
 
-    return new Promise((resolve, reject) => {
-      this.myLogger.log(`Start upload file to Qiniuyun, qiniuPath: ${qiniuPath}, sourceFilePath: ${sourceFilePath}`);
-
+    try {
       // 额外的上传参数
       const putExtra = new qiniu.form_up.PutExtra();
-      return this.formUploader.putFile(
+      const result = await this.formUploader.putFile(
         this.getUploadToken(qiniuPath),
         qiniuPath,
         sourceFilePath,
         putExtra,
-        (err, respBody, respInfo) => {
-          if (respInfo?.statusCode === 200) {
-            this.myLogger.log('Upload successful');
-            return resolve(respBody);
-          }
-
-          this.myLogger.error('Upload error: ' + (err?.message || respBody?.error));
-          return reject(err?.message || respBody?.error);
-        },
+        () => {},
       );
-    });
+
+      this.myLogger.log('Upload successful');
+      return Promise.resolve(result.data);
+    } catch (error) {
+      this.myLogger.error('Upload error: ' + error?.message);
+      return Promise.reject(error?.message);
+    }
   }
 
   // 从七牛云删除文件
