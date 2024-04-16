@@ -32,14 +32,13 @@ export class UserService {
     this.myLogger.log('getUserByName method, username: ' + username);
 
     const query = { username };
-    // 在 Mongoose 中，.exec() 方法通常用于执行查询并返回一个真正的 Promise 对象。findOne找不到时返回null。
-    return this.userModel.findOne(query).exec();
+    return this.userModel.findOne(query);
   }
 
   getUserList(): Promise<User[]> {
     this.myLogger.log('getUserList method');
 
-    return this.userModel.find().exec();
+    return this.userModel.find();
   }
 
   updateUser(userDto: UserDto): Promise<User> {
