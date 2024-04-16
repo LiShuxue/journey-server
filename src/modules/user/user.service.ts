@@ -19,6 +19,19 @@ export class UserService {
     this.myLogger.setContext('UserService');
   }
 
+  getUserList(): Promise<User[]> {
+    this.myLogger.log('getUserList method');
+
+    return this.userModel.find();
+  }
+
+  getUserByName(username: string): Promise<User> {
+    this.myLogger.log('getUserByName method, username: ' + username);
+
+    const filter = { username };
+    return this.userModel.findOne(filter);
+  }
+
   createUser(userDto: UserDto): Promise<User> {
     this.myLogger.log('createUser method');
 
@@ -28,38 +41,24 @@ export class UserService {
     return user.save();
   }
 
-  getUserByName(username: string): Promise<User> {
-    this.myLogger.log('getUserByName method, username: ' + username);
-
-    const query = { username };
-    return this.userModel.findOne(query);
-  }
-
-  getUserList(): Promise<User[]> {
-    this.myLogger.log('getUserList method');
-
-    return this.userModel.find();
-  }
-
   updateUser(userDto: UserDto): Promise<User> {
     this.myLogger.log('updateUser method');
 
-    const query = { username: userDto.username };
-    const updateDoc = {
+    const filter = { username: userDto.username };
+    const update = {
       $set: {
         username: userDto.username,
         password: userDto.password,
       },
     };
     // 使用 findOneAndUpdate 方法，并设置选项 { new: true }，这样它会返回更新后的文档。如果不设置 { new: true }，则默认返回更新前的文档。
-    return this.userModel.findOneAndUpdate(query, updateDoc, { new: true });
+    return this.userModel.findOneAndUpdate(filter, update, { new: true });
   }
 
   deleteUser(id: string): Promise<User> {
     this.myLogger.log('deleteUser method, id: ' + id);
 
-    const query = { _id: id };
     // 使用 findByIdAndDelete 删除并返回被删除的文档
-    return this.userModel.findByIdAndDelete(query);
+    return this.userModel.findByIdAndDelete(id);
   }
 }
