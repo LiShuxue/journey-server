@@ -31,7 +31,7 @@ import { BlogModule } from './modules/blog/blog.module';
     // 使用 MongooseModule 配置数据库，使用配置文件中的变量来连接数据库
     MongooseModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         const dbConfig = configService.get('db.journey');
         const uri = `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`;
 

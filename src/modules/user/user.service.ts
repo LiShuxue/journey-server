@@ -19,7 +19,7 @@ export class UserService {
     this.myLogger.setContext('UserService');
   }
 
-  async createUser(userDto: UserDto): Promise<User> {
+  createUser(userDto: UserDto): Promise<User> {
     this.myLogger.log('createUser method');
 
     // 创建用户 const xxx = new XxxModel({});
@@ -28,21 +28,21 @@ export class UserService {
     return user.save();
   }
 
-  async getUserByName(username: string): Promise<User> {
-    this.myLogger.log('getUserByName method');
+  getUserByName(username: string): Promise<User> {
+    this.myLogger.log('getUserByName method, username: ' + username);
 
     const query = { username };
     // 在 Mongoose 中，.exec() 方法通常用于执行查询并返回一个真正的 Promise 对象。findOne找不到时返回null。
     return this.userModel.findOne(query).exec();
   }
 
-  async getUserList(): Promise<User[]> {
+  getUserList(): Promise<User[]> {
     this.myLogger.log('getUserList method');
 
     return this.userModel.find().exec();
   }
 
-  async updateUser(userDto: UserDto): Promise<User> {
+  updateUser(userDto: UserDto): Promise<User> {
     this.myLogger.log('updateUser method');
 
     const query = { username: userDto.username };
@@ -56,8 +56,8 @@ export class UserService {
     return this.userModel.findOneAndUpdate(query, updateDoc, { new: true });
   }
 
-  async deleteUser(id: string): Promise<User> {
-    this.myLogger.log('deleteUser method');
+  deleteUser(id: string): Promise<User> {
+    this.myLogger.log('deleteUser method, id: ' + id);
 
     const query = { _id: id };
     // 使用 findByIdAndDelete 删除并返回被删除的文档
