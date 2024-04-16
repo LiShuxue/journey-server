@@ -14,6 +14,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './modules/task/task.module';
 import { CommonModule } from './modules/common/common.module';
+import { BlogModule } from './modules/blog/blog.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -55,12 +56,14 @@ import { CommonModule } from './modules/common/common.module';
     ScheduleModule.forRoot(),
     TasksModule,
 
-    // 引入通用模块，提供七牛云的上传和删除功能，以及获取天气功能
-    CommonModule,
-
-    // 其他业务模块，授权，用户，博客等
+    // 授权模块，如登录，鉴权，token
     AuthModule,
+    // 通用模块，提供七牛云的上传和删除功能，以及获取天气功能
+    CommonModule,
+    // 用户相关
     UserModule,
+    // 博客相关
+    BlogModule,
   ],
   controllers: [], // controllers：当前模块的控制器
   providers: [

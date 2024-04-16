@@ -20,7 +20,15 @@ db: {
 allowOrigin: 'https://lishuxue.site'
 
 # 不需要鉴权就可以访问的api接口
-publicApi: ['/auth/login']
+publicApi:
+  [
+    '/blog-api/auth/login',
+    '/blog-api/common/homeInfo',
+    '/blog-api/blog/list',
+    '/blog-api/blog/detail',
+    '/blog-api/blog/like',
+    '/blog-api/blog/comment/add',
+  ]
 
 # 接口限流配置，1分钟最多30次请求
 throttler_ttl: 60000
