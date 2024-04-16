@@ -35,7 +35,7 @@ export class UserService {
   createUser(userDto: UserDto): Promise<User> {
     this.myLogger.log('createUser method');
 
-    // 创建用户 const xxx = new XxxModel({});
+    // 创建对象 const xxx = new XxxModel({});
     const user = new this.userModel(userDto);
     // 在 Mongoose 中，保存数据到数据库通常使用 save() 方法。
     return user.save();

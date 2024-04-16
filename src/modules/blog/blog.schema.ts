@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
 
-type Image = {
+export type Image = {
   name: string;
   url: string;
 };
 
-type Comment = {
+export type Comment = {
   id: string;
   arthur: string;
   date: number;
@@ -16,7 +16,7 @@ type Comment = {
   isHide: boolean;
 };
 
-type Reply = Comment & {
+export type Reply = Comment & {
   parentId: string;
   replyName: string;
   replyEmail: string;

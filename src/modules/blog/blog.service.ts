@@ -14,12 +14,17 @@ export class BlogService {
     this.myLogger.setContext('BlogService');
   }
 
-  async getBlogList(): Promise<Blog[]> {
+  getBlogList(): Promise<Blog[]> {
     this.myLogger.log('getBlogList method');
 
-    return this.blogModel
-      .find({}, { tags: 0, htmlContent: 0, markdownContent: 0, comments: 0 })
-      .sort({ publishTime: -1 })
-      .exec();
+    const filter = {};
+    const projection = { tags: 0, htmlContent: 0, markdownContent: 0, comments: 0 };
+    return this.blogModel.find(filter, projection).sort({ publishTime: -1 });
+  }
+
+  getBlogDetail(id): Promise<Blog> {
+    this.myLogger.log('getBlogDetail method, id: ' + id);
+
+    return this.blogModel.findById(id);
   }
 }
