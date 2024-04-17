@@ -81,7 +81,7 @@ export class UserController {
   @Post('delete')
   @HttpCode(200)
   async deleteUser(@Body('id', IdValidationPipe) id: string) {
-    this.myLogger.log('getUserList method');
+    this.myLogger.log('deleteUser method, id: ' + id);
 
     try {
       const user = await this.userService.deleteUser(id);
