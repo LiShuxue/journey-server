@@ -258,4 +258,91 @@ export class BlogController {
       throw new BadRequestException(error);
     }
   }
+
+  @Post('comment/hide')
+  @HttpCode(200)
+  async hideComment(@Body('blogId', IdValidationPipe) blogId: Types.ObjectId, @Body('commentId') commentId: string) {
+    this.myLogger.log('hideComment method');
+
+    try {
+      // 找到博客
+      const blog = await this.blogService.getBlogDetail(blogId);
+      if (!blog) {
+        throw '未找到文章';
+      }
+
+      // 找到博客下面的具体评论
+      const totalComments = blog.comments;
+      const targetComment = this.findCommentById(totalComments, commentId);
+      if (!targetComment) {
+        throw '未找到评论或回复';
+      }
+      targetComment.isHide = true;
+
+      await this.blogService.updateComments(blogId, totalComments);
+      return {
+        comment: targetComment,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Post('comment/delete')
+  @HttpCode(200)
+  async deleteComment(@Body('blogId', IdValidationPipe) blogId: Types.ObjectId, @Body('commentId') commentId: string) {
+    this.myLogger.log('deleteComment method');
+
+    try {
+      // 找到博客
+      const blog = await this.blogService.getBlogDetail(blogId);
+      if (!blog) {
+        throw '未找到文章';
+      }
+
+      // 找到博客下面的具体评论，并删除
+      const totalComments = blog.comments;
+      const targetComment = this.deleteCommentById(totalComments, commentId);
+      if (!targetComment) {
+        throw '未找到评论或回复';
+      }
+
+      await this.blogService.updateComments(blogId, totalComments);
+      return {
+        comment: targetComment,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  // 根据id从Comments中找到对应的评论或回复
+  private findCommentById = (comments: (Comment | Reply)[], id: string): Comment | Reply => {
+    let result;
+    for (let i = 0; i < comments.length; i++) {
+      if (comments[i].id === id) {
+        result = comments[i];
+        break;
+      } else if ('reply' in comments[i]) {
+        result = this.findCommentById((comments[i] as Comment).reply, id);
+        if (result) break;
+      }
+    }
+    return result;
+  };
+
+  // 根据id从Comments中删除对应的评论或回复
+  private deleteCommentById = (comments: (Comment | Reply)[], id: string): Comment | Reply => {
+    let result;
+    for (let i = 0; i < comments.length; i++) {
+      if (comments[i].id === id) {
+        result = comments.splice(i, 1);
+        break;
+      } else if ('reply' in comments[i]) {
+        result = this.deleteCommentById((comments[i] as Comment).reply, id);
+        if (result) break;
+      }
+    }
+    return result;
+  };
 }
