@@ -12,6 +12,7 @@ import {
   MaxLength,
   IsUrl,
   ValidateNested,
+  IsEmail,
 } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -67,4 +68,19 @@ export class UpdateBlogDto extends CreateBlogDto {
   @IsString()
   @IsNotEmpty()
   _id: Types.ObjectId;
+}
+
+export class CommentDto {
+  @IsString()
+  @IsNotEmpty()
+  arthur: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  content: string;
 }

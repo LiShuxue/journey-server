@@ -13,8 +13,10 @@ import {
 import { MyLoggerService } from '../logger/logger.service';
 import { BlogService } from './blog.service';
 import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
-import { CreateBlogDto, UpdateBlogDto } from './blog.dto';
+import { CommentDto, CreateBlogDto, UpdateBlogDto } from './blog.dto';
 import { Types } from 'mongoose';
+import { randomBytes } from 'node:crypto';
+import { Reply, Comment } from './blog.schema';
 
 @Controller('blog')
 export class BlogController {
@@ -132,6 +134,9 @@ export class BlogController {
 
     try {
       const blog = await this.blogService.getBlogDetail(id);
+      if (!blog) {
+        throw '未找到文章';
+      }
 
       let newLikeAccount = blog.like;
       if (isLiked) {
@@ -145,6 +150,109 @@ export class BlogController {
       await this.blogService.updateLikeAccount(id, newLikeAccount);
       return {
         like: newLikeAccount,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Post('comment/add')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  async addComment(@Body('blogId', IdValidationPipe) blogId: Types.ObjectId, @Body('comment') comment: CommentDto) {
+    this.myLogger.log('addComment method');
+
+    try {
+      const blog = await this.blogService.getBlogDetail(blogId);
+      if (!blog) {
+        throw '未找到文章';
+      }
+
+      const comments = blog.comments;
+      const random = randomBytes(16).toString('hex');
+      const date = Date.now();
+      const newComment: Comment = {
+        id: `${date}${random}`, // 生成一个不重复的id
+        ...comment,
+        reply: [],
+        date,
+        isHide: false,
+      };
+      comments.unshift(newComment);
+
+      await this.blogService.updateComments(blogId, comments);
+      return {
+        comments,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Post('comment/reply')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  async replyComment(
+    @Body('blogId', IdValidationPipe) blogId: Types.ObjectId,
+    @Body('parentId') parentId: string,
+    @Body('replyId') replyId: string,
+    @Body('comment') comment: CommentDto,
+  ) {
+    this.myLogger.log('replyComment method');
+
+    try {
+      // 找到博客
+      const blog = await this.blogService.getBlogDetail(blogId);
+      if (!blog) {
+        throw '未找到文章';
+      }
+
+      // 找到博客下面的具体评论
+      const totalComments = blog.comments;
+      const targetComment = totalComments.find((item) => item.id === parentId);
+      if (!targetComment) {
+        throw '未找到父级评论';
+      }
+
+      let targetReply;
+      let isReplyParent;
+
+      // 如果父级评论的ID和replyId一致，表示对这条父级评论的回复
+      if (parentId === replyId) {
+        isReplyParent = true;
+        targetReply = targetComment;
+      } else {
+        // 如果父级评论的ID和replyId不一致，表示对这条父级评论下的其他回复进行的回复
+        isReplyParent = false;
+        // 找到评论中的哪个回复
+        targetReply = targetComment.reply.find((item) => item.id === replyId);
+      }
+
+      if (!targetReply) {
+        throw '未找到回复目标';
+      }
+
+      // 构建回复对象
+      const random = randomBytes(16).toString('hex');
+      const date = Date.now();
+      const newReply: Reply = {
+        parentId,
+        replyId,
+        isReplyParent,
+        replyArthur: targetReply.arthur,
+        replyEmail: targetReply.email,
+        replyContent: targetReply.content,
+        id: `${date}${random}`, // 生成一个不重复的id
+        ...comment,
+        date,
+        isHide: false,
+      };
+
+      targetComment.reply.push(newReply);
+
+      await this.blogService.updateComments(blogId, totalComments);
+      return {
+        comments: totalComments,
       };
     } catch (error) {
       throw new BadRequestException(error);
