@@ -14,6 +14,7 @@ import { MyLoggerService } from '../logger/logger.service';
 import { BlogService } from './blog.service';
 import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
 import { CreateBlogDto, UpdateBlogDto } from './blog.dto';
+import { Types } from 'mongoose';
 
 @Controller('blog')
 export class BlogController {
@@ -37,7 +38,7 @@ export class BlogController {
   }
 
   @Get('detail')
-  async getBlogDetail(@Query('id', IdValidationPipe) id: string) {
+  async getBlogDetail(@Query('id', IdValidationPipe) id: Types.ObjectId) {
     this.myLogger.log('getBlogDetail method');
 
     try {
@@ -45,6 +46,7 @@ export class BlogController {
       if (!blog) {
         throw '未找到文章信息';
       }
+      await this.blogService.updateSeeAccount(blog._id, blog.see + 1);
       return blog;
     } catch (error) {
       throw new BadRequestException(error);
@@ -67,6 +69,9 @@ export class BlogController {
         comments: [],
       };
 
+      // 保证只有这俩字段
+      blog.image = { name: blog.image.name, url: blog.image.url };
+
       const newBlog = await this.blogService.createBlog(blog);
       if (!newBlog) {
         throw '文章创建失败';
@@ -82,7 +87,7 @@ export class BlogController {
 
   @Post('delete')
   @HttpCode(200)
-  async deleteBlog(@Body('id', IdValidationPipe) id: string) {
+  async deleteBlog(@Body('id', IdValidationPipe) id: Types.ObjectId) {
     this.myLogger.log('deleteBlog method, id: ' + id);
 
     try {
@@ -105,6 +110,8 @@ export class BlogController {
     this.myLogger.log('updateBlog method');
 
     try {
+      // 保证只有这俩字段
+      blogDto.image = { name: blogDto.image.name, url: blogDto.image.url };
       const newBlog = await this.blogService.updateBlog(blogDto);
       if (!newBlog) {
         throw '未找到文章';

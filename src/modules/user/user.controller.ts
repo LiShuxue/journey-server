@@ -10,11 +10,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './user.dto';
+import { UpdateUserDto, UserDto } from './user.dto';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { createHmac } from 'node:crypto';
 import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
+import { Types } from 'mongoose';
 
 /*
   使用 @Controller('user') 注解声明一个controller，处理 user 路径下的请求，类里面的每一个方法，处理一个请求。
@@ -80,7 +81,7 @@ export class UserController {
 
   @Post('delete')
   @HttpCode(200)
-  async deleteUser(@Body('id', IdValidationPipe) id: string) {
+  async deleteUser(@Body('id', IdValidationPipe) id: Types.ObjectId) {
     this.myLogger.log('deleteUser method, id: ' + id);
 
     try {
@@ -99,7 +100,7 @@ export class UserController {
   @Post('update')
   @HttpCode(200)
   @UsePipes(ValidationPipe)
-  async updateUser(@Body() userDto: UserDto) {
+  async updateUser(@Body() userDto: UpdateUserDto) {
     this.myLogger.log('updateUser method');
 
     try {
@@ -107,6 +108,7 @@ export class UserController {
       const hashPass = createHmac('sha256', this.secret).update(password).digest('hex');
 
       const newUserDto = {
+        _id: userDto._id,
         username: userDto.username,
         password: hashPass,
       };

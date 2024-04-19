@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
-import * as mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 // 管道一般用于控制器的路由处理程序中，用于在数据传递给控制器之前对其进行验证、转换和处理。管道要么返回数据验证或者转换后的值，要么抛出一个错误。
 // 管道也是具有 @Injectable() 装饰器的类。管道应实现 PipeTransform 接口，且实现 transform 方法。
@@ -15,7 +15,7 @@ export class IdValidationPipe implements PipeTransform {
     this.myLogger.log('IdValidationPipe: ' + value);
 
     // 在这里进行数据验证或转换
-    if (!mongoose.Types.ObjectId.isValid(value)) {
+    if (!Types.ObjectId.isValid(value)) {
       throw new BadRequestException('Invalid MongoDB ID');
     }
 

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Schema as MongooseSchema } from 'mongoose';
+import { Schema as MongooseSchema, HydratedDocument } from 'mongoose';
 
 export type Image = {
   name: string;
@@ -65,5 +65,7 @@ export class Blog {
   @Prop({ type: [MongooseSchema.Types.Mixed] }) // 混合类型必须在prop中声明
   comments: Comment[];
 }
+
+export type BlogDocument = HydratedDocument<Blog>;
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);

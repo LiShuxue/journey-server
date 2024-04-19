@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { UserDto } from './user.dto';
-import { User } from './user.schema';
+import { Model, Types } from 'mongoose';
+import { UpdateUserDto, UserDto } from './user.dto';
+import { User, UserDocument } from './user.schema';
 import { MyLoggerService } from 'src/modules/logger/logger.service';
 
 /*
@@ -19,20 +19,20 @@ export class UserService {
     this.myLogger.setContext('UserService');
   }
 
-  getUserList(): Promise<User[]> {
+  getUserList(): Promise<UserDocument[]> {
     this.myLogger.log('getUserList method');
 
     return this.userModel.find();
   }
 
-  getUserByName(username: string): Promise<User> {
+  getUserByName(username: string): Promise<UserDocument> {
     this.myLogger.log('getUserByName method, username: ' + username);
 
     const filter = { username };
     return this.userModel.findOne(filter);
   }
 
-  createUser(userDto: UserDto): Promise<User> {
+  createUser(userDto: UserDto): Promise<UserDocument> {
     this.myLogger.log('createUser method');
 
     // 创建对象 const xxx = new XxxModel({});
@@ -41,21 +41,20 @@ export class UserService {
     return user.save();
   }
 
-  updateUser(userDto: UserDto): Promise<User> {
+  updateUser(userDto: UpdateUserDto): Promise<UserDocument> {
     this.myLogger.log('updateUser method');
 
-    const filter = { username: userDto.username };
     const update = {
       $set: {
         username: userDto.username,
         password: userDto.password,
       },
     };
-    // 使用 findOneAndUpdate 方法，并设置选项 { new: true }，这样它会返回更新后的文档。如果不设置 { new: true }，则默认返回更新前的文档。
-    return this.userModel.findOneAndUpdate(filter, update, { new: true });
+    // 使用 findByIdAndUpdate 方法，并设置选项 { new: true }，这样它会返回更新后的文档。如果不设置 { new: true }，则默认返回更新前的文档。
+    return this.userModel.findByIdAndUpdate(userDto._id, update, { new: true });
   }
 
-  deleteUser(id: string): Promise<User> {
+  deleteUser(id: Types.ObjectId): Promise<UserDocument> {
     this.myLogger.log('deleteUser method, id: ' + id);
 
     // 使用 findByIdAndDelete 删除并返回被删除的文档

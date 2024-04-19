@@ -13,6 +13,7 @@ import {
   IsUrl,
   ValidateNested,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class Image {
   @IsString()
@@ -65,5 +66,5 @@ export class CreateBlogDto {
 export class UpdateBlogDto extends CreateBlogDto {
   @IsString()
   @IsNotEmpty()
-  _id: string;
+  _id: Types.ObjectId;
 }

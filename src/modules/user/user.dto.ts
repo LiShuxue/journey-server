@@ -3,6 +3,7 @@
 // DTO 可以作为 API 文档的一部分。通过定义 DTO，你可以清晰地记录每个接口的输入和输出数据格式，从而生成准确的 API 文档。
 // 如果你希望 DTO 中的属性可以在对象创建后不能被修改，可以将它们定义为 readonly。
 import { IsString, IsNotEmpty } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class UserDto {
   @IsString()
@@ -12,4 +13,10 @@ export class UserDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+}
+
+export class UpdateUserDto extends UserDto {
+  @IsString()
+  @IsNotEmpty()
+  _id: Types.ObjectId;
 }

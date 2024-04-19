@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Blog, Comment } from './blog.schema';
+import { Model, Types } from 'mongoose';
+import { Blog, BlogDocument, Comment } from './blog.schema';
 import { MyLoggerService } from '../logger/logger.service';
 import { UpdateBlogDto } from './blog.dto';
 
@@ -15,7 +15,7 @@ export class BlogService {
     this.myLogger.setContext('BlogService');
   }
 
-  getBlogList(): Promise<Blog[]> {
+  getBlogList(): Promise<BlogDocument[]> {
     this.myLogger.log('getBlogList method');
 
     const filter = {};
@@ -23,13 +23,13 @@ export class BlogService {
     return this.blogModel.find(filter, projection).sort({ publishTime: -1 });
   }
 
-  getBlogDetail(id): Promise<Blog> {
+  getBlogDetail(id: Types.ObjectId): Promise<BlogDocument> {
     this.myLogger.log('getBlogDetail method, id: ' + id);
 
     return this.blogModel.findById(id);
   }
 
-  createBlog(blog: Blog): Promise<Blog> {
+  createBlog(blog: Blog): Promise<BlogDocument> {
     this.myLogger.log('createBlog method');
 
     // 创建对象 const xxx = new XxxModel({});
@@ -38,7 +38,7 @@ export class BlogService {
     return newBlog.save();
   }
 
-  updateBlog(blogDto: UpdateBlogDto): Promise<Blog> {
+  updateBlog(blogDto: UpdateBlogDto): Promise<BlogDocument> {
     this.myLogger.log('updateBlog method, id: ' + blogDto._id);
 
     const update = {
@@ -58,7 +58,7 @@ export class BlogService {
     return this.blogModel.findByIdAndUpdate(blogDto._id, update, { new: true });
   }
 
-  updateSeeAccount = (id: string, seeCount: number): Promise<Blog> => {
+  updateSeeAccount = (id: Types.ObjectId, seeCount: number): Promise<BlogDocument> => {
     this.myLogger.log('updateSeeAccount method, id: ' + id);
 
     const update = {
@@ -68,7 +68,7 @@ export class BlogService {
     return this.blogModel.findByIdAndUpdate(id, update, { new: true });
   };
 
-  updateLikeAccount = (id: string, likeCount: number): Promise<Blog> => {
+  updateLikeAccount = (id: Types.ObjectId, likeCount: number): Promise<BlogDocument> => {
     this.myLogger.log('updateLikeAccount method, id: ' + id);
 
     const update = {
@@ -78,7 +78,7 @@ export class BlogService {
     return this.blogModel.findByIdAndUpdate(id, update, { new: true });
   };
 
-  updateComments = (id: string, comments: Comment[]): Promise<Blog> => {
+  updateComments = (id: Types.ObjectId, comments: Comment[]): Promise<BlogDocument> => {
     this.myLogger.log('updateComments method, id: ' + id);
 
     const update = {
@@ -88,7 +88,7 @@ export class BlogService {
     return this.blogModel.findByIdAndUpdate(id, update, { new: true });
   };
 
-  deleteBlog(id: string): Promise<Blog> {
+  deleteBlog(id: Types.ObjectId): Promise<BlogDocument> {
     this.myLogger.log('deleteBlog method, id: ' + id);
 
     // 使用 findByIdAndDelete 删除并返回被删除的文档
