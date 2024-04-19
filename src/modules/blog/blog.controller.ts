@@ -13,7 +13,7 @@ import {
 import { MyLoggerService } from '../logger/logger.service';
 import { BlogService } from './blog.service';
 import { IdValidationPipe } from 'src/pipes/idValidation.pipe';
-import { BlogDto } from './blog.dto';
+import { CreateBlogDto, UpdateBlogDto } from './blog.dto';
 
 @Controller('blog')
 export class BlogController {
@@ -54,16 +54,18 @@ export class BlogController {
   @Post('create')
   @HttpCode(200)
   @UsePipes(ValidationPipe)
-  async createBlog(@Body() blogDto: BlogDto) {
+  async createBlog(@Body() blogDto: CreateBlogDto) {
     this.myLogger.log('createBlog method');
 
     try {
-      const blog: any = blogDto;
-      blog.publishTime = Date.now();
-      blog.updateTime = Date.now();
-      blog.see = 0;
-      blog.like = 0;
-      blog.comments = [];
+      const blog = {
+        ...blogDto,
+        publishTime: Date.now(),
+        updateTime: Date.now(),
+        see: 0,
+        like: 0,
+        comments: [],
+      };
 
       const newBlog = await this.blogService.createBlog(blog);
       if (!newBlog) {
@@ -99,13 +101,11 @@ export class BlogController {
   @Post('update')
   @HttpCode(200)
   @UsePipes(ValidationPipe)
-  async updateBlog(@Body() blogDto: BlogDto) {
+  async updateBlog(@Body() blogDto: UpdateBlogDto) {
     this.myLogger.log('updateBlog method');
 
     try {
-      const blog: any = blogDto;
-      const id = blog._id;
-      const newBlog = await this.blogService.updateBlog(id, blogDto);
+      const newBlog = await this.blogService.updateBlog(blogDto);
       if (!newBlog) {
         throw '未找到文章';
       }

@@ -2,10 +2,30 @@
 // DTO 也可以用于格式化传出响应的数据。通过定义输出 DTO，你可以指定响应的数据结构，并确保响应的数据符合预期的格式。
 // DTO 可以作为 API 文档的一部分。通过定义 DTO，你可以清晰地记录每个接口的输入和输出数据格式，从而生成准确的 API 文档。
 // 如果你希望 DTO 中的属性可以在对象创建后不能被修改，可以将它们定义为 readonly。
-import { IsString, IsNotEmpty, IsBoolean, ArrayNotEmpty, ArrayMaxSize } from 'class-validator';
-import { Image } from './blog.schema';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsBoolean,
+  ArrayNotEmpty,
+  ArrayMaxSize,
+  MaxLength,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
 
-export class BlogDto {
+export class Image {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsUrl()
+  url: string;
+}
+
+export class CreateBlogDto {
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -14,6 +34,8 @@ export class BlogDto {
   @IsNotEmpty()
   subTitle: string;
 
+  @ValidateNested()
+  @Type(() => Image)
   image: Image;
 
   @IsString()
@@ -34,5 +56,14 @@ export class BlogDto {
 
   @ArrayNotEmpty()
   @ArrayMaxSize(5)
+  @MaxLength(20, {
+    each: true,
+  })
   tags: string[];
+}
+
+export class UpdateBlogDto extends CreateBlogDto {
+  @IsString()
+  @IsNotEmpty()
+  _id: string;
 }

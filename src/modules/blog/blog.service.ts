@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Blog, Comment } from './blog.schema';
 import { MyLoggerService } from '../logger/logger.service';
-import { BlogDto } from './blog.dto';
+import { UpdateBlogDto } from './blog.dto';
 
 @Injectable()
 export class BlogService {
@@ -29,17 +29,17 @@ export class BlogService {
     return this.blogModel.findById(id);
   }
 
-  createBlog(blogDto: Blog): Promise<Blog> {
+  createBlog(blog: Blog): Promise<Blog> {
     this.myLogger.log('createBlog method');
 
     // 创建对象 const xxx = new XxxModel({});
-    const blog = new this.blogModel(blogDto);
+    const newBlog = new this.blogModel(blog);
     // 在 Mongoose 中，保存数据到数据库通常使用 save() 方法。
-    return blog.save();
+    return newBlog.save();
   }
 
-  updateBlog(id: string, blogDto: BlogDto): Promise<Blog> {
-    this.myLogger.log('updateBlog method, id: ' + id);
+  updateBlog(blogDto: UpdateBlogDto): Promise<Blog> {
+    this.myLogger.log('updateBlog method, id: ' + blogDto._id);
 
     const update = {
       $set: {
@@ -55,7 +55,7 @@ export class BlogService {
       },
     };
     // 使用 findByIdAndUpdate 方法，并设置选项 { new: true }，这样它会返回更新后的文档。如果不设置 { new: true }，则默认返回更新前的文档。
-    return this.blogModel.findByIdAndUpdate(id, update, { new: true });
+    return this.blogModel.findByIdAndUpdate(blogDto._id, update, { new: true });
   }
 
   updateSeeAccount = (id: string, seeCount: number): Promise<Blog> => {
