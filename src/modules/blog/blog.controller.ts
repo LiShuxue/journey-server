@@ -124,4 +124,30 @@ export class BlogController {
       throw new BadRequestException(error);
     }
   }
+
+  @Post('like')
+  @HttpCode(200)
+  async updateLikeAccount(@Body('id', IdValidationPipe) id: Types.ObjectId, @Body('isLiked') isLiked: boolean) {
+    this.myLogger.log('updateLikeAccount method');
+
+    try {
+      const blog = await this.blogService.getBlogDetail(id);
+
+      let newLikeAccount = blog.like;
+      if (isLiked) {
+        newLikeAccount = blog.like + 1;
+      } else {
+        if (newLikeAccount >= 1) {
+          newLikeAccount = blog.like - 1;
+        }
+      }
+
+      await this.blogService.updateLikeAccount(id, newLikeAccount);
+      return {
+        like: newLikeAccount,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }
