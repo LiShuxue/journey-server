@@ -13,9 +13,7 @@ import { MyLoggerService } from 'src/modules/logger/logger.service';
 import { QiniuService } from './qiniu.service';
 import { ConfigService } from '@nestjs/config';
 import { TencentService } from './tencent.service';
-import { load } from 'cheerio'; // 服务器上操作HTML，类似jquery
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { HtmlService } from './html.service';
 
 @Controller('common')
 export class CommonController {
@@ -24,7 +22,7 @@ export class CommonController {
     private readonly qiniuService: QiniuService,
     private readonly configService: ConfigService,
     private readonly tencentService: TencentService,
-    private readonly httpService: HttpService,
+    private readonly htmlService: HtmlService,
   ) {
     this.myLogger.setContext('CommonController');
   }
@@ -84,7 +82,7 @@ export class CommonController {
     this.myLogger.log('getHomeInfo method, IP: ' + ip);
 
     try {
-      const one = await this.loadWebPage();
+      const one = await this.htmlService.loadWebPage();
 
       const locationRes = await this.tencentService.getLocationByIp(ip);
       const address = locationRes?.result?.ad_info ?? {};
@@ -102,30 +100,4 @@ export class CommonController {
       throw new InternalServerErrorException(error);
     }
   }
-
-  private loadWebPage = async () => {
-    this.myLogger.log('loadWebPage method');
-
-    const response$ = await this.httpService.get('https://wufazhuce.com/');
-    const response = await firstValueFrom(response$);
-    const result = this.getImageAndText(response.data);
-    return result;
-  };
-
-  private getImageAndText = (htmlString: string) => {
-    this.myLogger.log('getImageAndText method');
-
-    const $ = load(htmlString);
-    const todayOne = $('#carousel-one .carousel-inner .item.active');
-    const imageUrl = $(todayOne).find('.fp-one-imagen').attr('src');
-    const text = $(todayOne)
-      .find('.fp-one-cita')
-      .text()
-      .replace(/(^\s*)|(\s*$)/g, '');
-
-    return {
-      imageUrl,
-      text,
-    };
-  };
 }
