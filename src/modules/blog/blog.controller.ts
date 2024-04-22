@@ -17,12 +17,14 @@ import { CommentDto, CreateBlogDto, UpdateBlogDto } from './blog.dto';
 import { Types } from 'mongoose';
 import { randomBytes } from 'node:crypto';
 import { Reply, Comment } from './blog.schema';
+import { EmailService } from '../email/email.service';
 
 @Controller('blog')
 export class BlogController {
   constructor(
     private readonly myLogger: MyLoggerService,
     private readonly blogService: BlogService,
+    private readonly emailService: EmailService,
   ) {
     this.myLogger.setContext('BlogController');
   }
@@ -181,6 +183,7 @@ export class BlogController {
       comments.unshift(newComment);
 
       await this.blogService.updateComments(blogId, comments);
+      await this.emailService.sendCommentNotification(blog, newComment);
       return {
         comments,
       };
@@ -251,6 +254,7 @@ export class BlogController {
       targetComment.reply.push(newReply);
 
       await this.blogService.updateComments(blogId, totalComments);
+      await this.emailService.sendCommentNotification(blog, newReply);
       return {
         comments: totalComments,
       };
