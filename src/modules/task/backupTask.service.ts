@@ -8,13 +8,13 @@ import dayjs from 'dayjs';
 import { QiniuService } from '../common/qiniu.service';
 
 @Injectable()
-export class BackupService {
+export class BackupTaskService {
   constructor(
     private readonly myLogger: MyLoggerService,
     private readonly configService: ConfigService,
     private readonly qiniuService: QiniuService,
   ) {
-    this.myLogger.setContext('BackupService');
+    this.myLogger.setContext('BackupTaskService');
   }
 
   // * * * * * *
