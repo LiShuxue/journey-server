@@ -9,6 +9,6 @@ import { HtmlService } from './html.service';
   imports: [HttpModule],
   controllers: [CommonController],
   providers: [QiniuService, TencentService, HtmlService],
-  exports: [QiniuService], // 要在别的地方使用，主要是backup那里，要用到上传
+  exports: [QiniuService, TencentService, HtmlService], // 要在别的地方使用，主要是定时任务那里
 })
 export class CommonModule {}

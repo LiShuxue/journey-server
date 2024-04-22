@@ -84,11 +84,8 @@ export class CommonController {
     try {
       const one = await this.htmlService.loadWebPage();
 
-      const locationRes = await this.tencentService.getLocationByIp(ip);
-      const address = locationRes?.result?.ad_info ?? {};
-
-      const weatherRes = await this.tencentService.getWeatherByLocation(address);
-      const weather = weatherRes?.data ?? {};
+      const address = await this.tencentService.getLocationByIp(ip);
+      const weather = await this.tencentService.getWeatherByLocation(address);
 
       const body = {
         one,

@@ -27,7 +27,7 @@ export class TencentService {
     const response$ = this.httpService.get(url);
     // 将Observable对象转为Promise
     const response = await firstValueFrom(response$);
-    return response.data;
+    return response.data?.result?.ad_info ?? {};
   }
 
   async getWeatherByLocation(location: any = {}) {
@@ -36,6 +36,6 @@ export class TencentService {
     const url = `${this.weatherUrl}&province=${location.province}&city=${location.city}&county=${location.district}`;
     const response$ = this.httpService.get(url);
     const response = await firstValueFrom(response$);
-    return response.data;
+    return response.data?.data ?? {};
   }
 }

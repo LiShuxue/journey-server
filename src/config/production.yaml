@@ -39,3 +39,6 @@ trustProxy: ['47.93.18.226']
 
 # 所有本地项目存放的位置，用于上传功能
 projectPath: '/root/project'
+
+# 是否开启 定时发邮件的功能
+sendEmailTaskEnable: true
