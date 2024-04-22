@@ -28,6 +28,7 @@ publicApi:
     '/blog-api/blog/detail',
     '/blog-api/blog/like',
     '/blog-api/blog/comment/add',
+    '/blog-api/blog/comment/reply',
   ]
 
 # 接口限流配置，1分钟最多30次请求

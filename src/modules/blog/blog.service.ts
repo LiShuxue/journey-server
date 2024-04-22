@@ -19,7 +19,7 @@ export class BlogService {
     this.myLogger.log('getBlogList method');
 
     const filter = {};
-    const projection = { tags: 0, htmlContent: 0, markdownContent: 0, comments: 0 };
+    const projection = { htmlContent: 0, markdownContent: 0, comments: 0 };
     return this.blogModel.find(filter, projection).sort({ publishTime: -1 });
   }
 
