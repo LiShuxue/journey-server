@@ -64,8 +64,10 @@ export class BackupTaskService {
       await execPromise(`rm -rf ${oldFileName}`);
       const oldQiniuPath = 'blog/mongodb/' + oldFileName;
       await this.qiniuService.deleteFile(oldQiniuPath);
+
+      this.myLogger.log('db backup task done');
     } catch (err) {
-      this.myLogger.error('db backup error: ' + (err?.message || err));
+      this.myLogger.error('db backup task error: ' + (err?.message || err));
     }
   }
 }
