@@ -20,7 +20,7 @@ export class TencentService {
   }
 
   async getLocationByIp(ip = '') {
-    this.myLogger.log('getLocationByIp method');
+    this.myLogger.log('getLocationByIp method, ip: ' + ip);
 
     const url = `${this.locationUrl}?ip=${ip}&key=${this.secretkey}`;
     // 返回的是Observable对象，不是Promise
