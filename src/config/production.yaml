@@ -6,10 +6,10 @@ secret: 'journey-secret-key'
 
 # DB信息
 db: {
-    # journey db，业务DB
-    journey: { host: 'localhost', port: '27017', username: 'journey', password: 'journey', database: 'journey' },
-    # admin db，数据库管理员DB
-    admin: { host: 'localhost', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
+    # journey db，业务DB，host是docker中数据库服务的网址
+    journey: { host: 'journey-mongodb', port: '27017', username: 'journey', password: 'journey', database: 'journey' },
+    # admin db，数据库管理员DB，host是docker中数据库服务的网址
+    admin: { host: 'journey-mongodb', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
     # 是否开启备份
     backupEnable: true,
     # 备份文件的路径

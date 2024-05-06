@@ -1,0 +1,70 @@
+name: docker-build # action名称
+
+on: # 在push代码的时候运行此action
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - Dockerfile
+      - package.json
+      - pnpm-lock.yaml
+
+jobs:
+  docker_build_deploy:
+    runs-on: ubuntu-latest # 运行环境，最新ubuntu
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: lishuxue/journey-server:latest
+
+      - name: docker stop # 停止服务
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: cd /root/project/journey/journey-docker && docker compose down journey-server
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+
+      - name: docker pull image # 服务器拉取最新镜像
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: docker pull lishuxue/journey-server:latest
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+
+      - name: docker run # 启动服务
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: cd /root/project/journey/journey-docker && docker compose up -d journey-server
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+
+      - name: docker delete unused image # 删除多余的镜像
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: docker image prune --force
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}

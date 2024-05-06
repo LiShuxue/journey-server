@@ -1,0 +1,71 @@
+name: code-build # action名称
+
+on: # 在push代码的时候运行此action
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - src/**
+
+jobs:
+  code_build_deploy: # 代码的打包和部署
+    runs-on: ubuntu-latest # 运行环境，最新ubuntu
+
+    strategy:
+      matrix:
+        node-version: [18.20.0] # 设置bode版本，可以是多个
+
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }} # 使用 node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Show version # 查看版本，方便从log信息上确认
+        run: node -v && npm -v
+
+      - name: setEnv # 开启yarn和pnpm，设置源
+        run: corepack enable && npm config set registry https://registry.npmmirror.com && yarn config set registry https://registry.npmmirror.com && pnpm config set registry https://registry.npmmirror.com
+
+      - name: Checkout # check out the repository
+        uses: actions/checkout@v4 # 这里使用了github官方提供的action,checkout项目到虚拟机上
+
+      - name: Install Dependencies # 安装依赖
+        run: pnpm i
+
+      - name: Build # 构建
+        run: pnpm build
+
+      - name: Clean remote folder # 删除远程的代码
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: rm -rf /root/project/journey/journey-server/dist
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+
+      - name: Upload build file to server # 部署
+        uses: appleboy/scp-action@master # 使用第三方action 上传静态文件到服务器
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: 'dist'
+          target: '/root/project/journey/journey-server' # 代码部署路径
+
+      - name: docker stop journey-server # 停止服务
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: cd /root/project/journey/journey-docker && docker compose down journey-server
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+
+      - name: docker start journey-server # 启动服务
+        uses: garygrossgarten/github-action-ssh@release # 使用第三方action 远程执行命令
+        with:
+          command: cd /root/project/journey/journey-docker && docker compose up -d journey-server
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
