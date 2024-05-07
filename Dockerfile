@@ -32,7 +32,7 @@ EXPOSE 4000
 ENV NODE_ENV=production
 
 # 启动journey-server程序
-CMD ["tail", "-f", "/dev/null"]
+CMD [ "node", "dist/main.js" ]
 
 # 可以通过 docker build -t journey-server:dev . 来创建本地镜像，默认是latest标签
 # 通过 docker run -d -p 4000:4000 --name journey-server --network journey-network --rm journey-server:dev 来运行此镜像

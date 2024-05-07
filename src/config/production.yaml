@@ -6,7 +6,7 @@ secret: 'journey-secret-key'
 
 # DB信息
 db: {
-    # journey db，业务DB，host是docker中数据库服务的网址
+    # journey db，业务DB，host是docker中数据库服务的网址，数据库第一次在服务器上恢复以后，需要先创建这些用户。admin的用户被docker-compose创建了，journey的没有
     journey: { host: 'journey-mongodb', port: '27017', username: 'journey', password: 'journey', database: 'journey' },
     # admin db，数据库管理员DB，host是docker中数据库服务的网址
     admin: { host: 'journey-mongodb', port: '27017', username: 'lishuxue', password: 'lishuxue', database: 'admin' },
