@@ -36,6 +36,17 @@ EXPOSE 4000
 # 直接设置 ENV NODE_ENV=production
 ENV NODE_ENV=production
 
+# 安装docker命令行
+RUN apk update
+RUN apk add docker-cli
+
+# 安装zip命令
+RUN apk add zip
+
+# 设置时区，使用北京时间。虽然用的上海表示，但是不影响
+RUN apk add tzdata
+ENV TZ=Asia/Shanghai
+
 # 启动journey-server程序
 CMD [ "node", "dist/main.js" ]
 
