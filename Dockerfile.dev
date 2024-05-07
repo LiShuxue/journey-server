@@ -10,10 +10,15 @@ WORKDIR /journey-server
 # 创建日志目录
 RUN mkdir logs
 RUN mkdir dist
+# 在/root目录下创建文件夹
+RUN mkdir /root/mongodb
+RUN mkdir /root/project
 
 # 将容器的文件夹挂载出去
 VOLUME /journey-server/logs
 VOLUME /journey-server/dist
+VOLUME /root/mongodb
+VOLUME /root/project
 
 # 复制依赖，因为这个不怎么变化，所以单独放一层
 COPY package.json pnpm-lock.yaml ./
