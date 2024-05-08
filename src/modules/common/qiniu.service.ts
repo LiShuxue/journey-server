@@ -12,6 +12,7 @@ export class QiniuService {
   private mac: qiniu.auth.digest.Mac;
   private formUploader: qiniu.form_up.FormUploader;
   private bucketManager: qiniu.rs.BucketManager;
+  private cdnManager: qiniu.cdn.CdnManager;
 
   constructor(private readonly myLogger: MyLoggerService) {
     this.myLogger.setContext('QiniuService');
@@ -24,6 +25,8 @@ export class QiniuService {
     this.formUploader = new qiniu.form_up.FormUploader(config);
     // 资源管理对象
     this.bucketManager = new qiniu.rs.BucketManager(this.mac, config);
+    // cdn管理对象
+    this.cdnManager = new qiniu.cdn.CdnManager(this.mac);
   }
 
   // 获取七牛云上传凭证，用于上传之前获取到token
@@ -54,8 +57,11 @@ export class QiniuService {
         putExtra,
         () => {},
       );
-
       this.myLogger.log('Upload successful');
+
+      // cdn 刷新
+      this.refreshCdn(qiniuPath);
+
       return Promise.resolve(result.data);
     } catch (error) {
       this.myLogger.error('Upload error: ' + error?.message);
@@ -79,6 +85,20 @@ export class QiniuService {
         this.myLogger.error('Delete error: ' + (err?.message || respBody?.error));
         return reject(err?.message || respBody?.error);
       });
+    });
+  }
+
+  refreshCdn(qiniuPath: string) {
+    // 参考步骤：https://developer.qiniu.com/kodo/1289/nodejs#fusion-refresh-urls
+    const url = 'https://cdn.lishuxue.site/' + qiniuPath;
+    this.myLogger.log('refreshCdn method, refreshUrl: ' + url);
+
+    this.cdnManager.refreshUrls([url], (err, respBody, respInfo) => {
+      if (respInfo?.statusCode === 200) {
+        this.myLogger.log('refreshCdn successful');
+        return;
+      }
+      this.myLogger.error('refreshCdn error: ' + (err?.message || respBody?.error));
     });
   }
 }
