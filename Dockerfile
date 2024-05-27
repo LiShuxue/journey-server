@@ -8,7 +8,7 @@ RUN corepack enable && npm config set registry https://registry.npmmirror.com &&
 WORKDIR /journey-server
 
 # 创建日志目录
-RUN mkdir logs
+RUN mkdir logs && chmod -R 777 logs
 RUN mkdir dist
 # 在/root目录下创建文件夹
 RUN mkdir /root/mongodb
