@@ -27,6 +27,7 @@ export class MyLoggerService implements LoggerService {
           maxFiles: '14d',
           // info及以下的日志
           level: 'info',
+          auditFile: 'logs/audit-info.json',
         }),
         // 同上述方法，区分error日志和info日志，保存在不同文件，方便问题排查
         new transports.DailyRotateFile({
@@ -37,6 +38,7 @@ export class MyLoggerService implements LoggerService {
           maxSize: '10m',
           maxFiles: '14d',
           level: 'error',
+          auditFile: 'logs/audit-error.json',
         }),
       ];
     } else {
