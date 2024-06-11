@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { MyLoggerService } from './modules/logger/logger.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { urlencoded, json } from 'express';
 
 /*
   Nestjs 是一个类似于Spring的框架。
@@ -29,6 +30,11 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
+
+  // 增加请求体的大小限制
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
+
   // 获取全局配置，这个service是由 @nestjs/config 库提供
   const configService = app.get(ConfigService);
   const port = configService.get('port');
