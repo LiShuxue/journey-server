@@ -7,6 +7,7 @@ on: # 在push代码的时候运行此action
       - master
     paths:
       - src/**
+      - .github/workflows/code-build.yml
 
 jobs:
   code_build_deploy: # 代码的打包和部署

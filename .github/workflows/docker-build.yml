@@ -9,6 +9,7 @@ on: # 在push代码的时候运行此action
       - Dockerfile
       - package.json
       - pnpm-lock.yaml
+      - .github/workflows/docker-build.yml
 
 jobs:
   docker_build_deploy:
