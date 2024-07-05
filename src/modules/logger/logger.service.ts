@@ -20,7 +20,7 @@ export class MyLoggerService implements LoggerService {
           // 日期格式
           datePattern: 'YYYY-MM-DD',
           // 压缩文档，用于定义是否对存档的日志文件进行 gzip 压缩 默认值 false
-          zippedArchive: true,
+          zippedArchive: false,
           // 文件最大大小，可以是bytes、kb、mb、gb
           maxSize: '10m',
           // 最大文件数，可以是文件数也可以是天数，天数加单位"d"，
@@ -34,7 +34,7 @@ export class MyLoggerService implements LoggerService {
           dirname: 'logs',
           filename: 'application-%DATE%.error.log',
           datePattern: 'YYYY-MM-DD',
-          zippedArchive: true,
+          zippedArchive: false,
           maxSize: '10m',
           maxFiles: '14d',
           level: 'error',
