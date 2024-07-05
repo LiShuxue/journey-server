@@ -14,6 +14,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BlogModule } from './modules/blog/blog.module';
 import { CommonModule } from './modules/common/common.module';
+import { TasksModule } from './modules/task/task.module';
 
 @Module({
   // imports：当前模块所依赖的其他模块
@@ -51,13 +52,13 @@ import { CommonModule } from './modules/common/common.module';
       ],
     }),
 
+    // 通用模块，如上传下载等，还有首页homeInfo等接口
+    CommonModule,
+
     // 引入定时任务的功能，引入定时任务的TaskModule
     ScheduleModule.forRoot(),
-    // 尝试关闭定时任务模块
-    // TasksModule,
-
-    // 通用模块，如上传下载等
-    CommonModule,
+    // 定时任务模块
+    TasksModule,
 
     // 授权模块，如登录，鉴权，token
     AuthModule,
