@@ -23,7 +23,7 @@ export class BackupTaskService {
   // 测试时，每分钟的0,10,20,30,40,50秒时执行
   // @Cron('0,10,20,30,40,50 * * * * *')
   // 每周三和周五的凌晨4点
-  @Cron('0 0 4 * * 3,5')
+  @Cron('0 0 4 * * 3,4,5')
   async dbBackup() {
     this.myLogger.log('dbBackup method');
     try {
