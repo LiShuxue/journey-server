@@ -23,7 +23,7 @@ export class BackupTaskService {
   // 测试时，每分钟的0,10,20,30,40,50秒时执行
   // @Cron('0,10,20,30,40,50 * * * * *')
   // 每周三和周五的凌晨4点
-  @Cron('0 0 4 * * 3,4,5')
+  @Cron('0 0 4 * * 3,5')
   async dbBackup() {
     this.myLogger.log('dbBackup method');
     try {
@@ -40,15 +40,14 @@ export class BackupTaskService {
       const execPromise = promisify(exec);
       await execPromise(shell);
 
-      // 更改进程的当前工作目录
+      // 获取备份目录
       const dbBackupPath = this.configService.get('db.backupPath');
-      process.chdir(dbBackupPath);
 
       // 压缩数据库备份文件
       const now = Date.now();
       const time = dayjs(now).format('YYYY-MM-DD-HH-mm');
       const fileName = `DB-journey-${time}.zip`;
-      await execPromise(`zip -r ${fileName} journey`);
+      await execPromise(`zip -r ${dbBackupPath}/${fileName} ${dbBackupPath}/journey`);
 
       // 上传至七牛云
       const qiniuPath = 'blog/mongodb/' + fileName;
@@ -61,7 +60,7 @@ export class BackupTaskService {
       const old = now - 1000 * 60 * 60 * 24 * 7 * 5;
       const oldTime = dayjs(old).format('YYYY-MM-DD-HH-mm');
       const oldFileName = `DB-journey-${oldTime}.zip`;
-      await execPromise(`rm -rf ${oldFileName}`);
+      await execPromise(`rm -rf ${dbBackupPath}/${oldFileName}`);
       const oldQiniuPath = 'blog/mongodb/' + oldFileName;
       await this.qiniuService.deleteFile(oldQiniuPath);
 
