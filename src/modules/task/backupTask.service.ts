@@ -23,7 +23,7 @@ export class BackupTaskService {
   // 测试时，每分钟的0,10,20,30,40,50秒时执行
   // @Cron('0,10,20,30,40,50 * * * * *')
   // 每周三和周五的凌晨4点
-  @Cron('0 0 4 * * 3,4,5')
+  @Cron('0 0 4 * * 0,1,2,3,4,5,6')
   async dbBackup() {
     this.myLogger.log('dbBackup method');
     try {
@@ -35,10 +35,10 @@ export class BackupTaskService {
       this.myLogger.log('db backup task start');
       // 备份数据库
       // docker exec journey-mongodb mongodump -h localhost:27017 -d journey -o /backup --authenticationDatabase admin -u lishuxue -p lishuxue
-      const dbConfig = this.configService.get('db.admin');
-      const shell = `docker exec journey-mongodb mongodump -h ${dbConfig.host}:${dbConfig.port} -d journey -o /backup --authenticationDatabase ${dbConfig.database} -u ${dbConfig.username} -p ${dbConfig.password}`;
+      // const dbConfig = this.configService.get('db.admin');
+      // const shell = `docker exec journey-mongodb mongodump -h ${dbConfig.host}:${dbConfig.port} -d journey -o /backup --authenticationDatabase ${dbConfig.database} -u ${dbConfig.username} -p ${dbConfig.password}`;
       const execPromise = promisify(exec);
-      await execPromise(shell);
+      // await execPromise(shell);
 
       // 更改进程的当前工作目录
       const dbBackupPath = this.configService.get('db.backupPath');
