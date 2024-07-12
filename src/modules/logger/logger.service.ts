@@ -1,6 +1,7 @@
 import { Logger, createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import { LoggerService, Injectable, Scope } from '@nestjs/common';
+import * as path from 'path';
 
 @Injectable({ scope: Scope.TRANSIENT }) // 虽然LoggerModule 是全局的，但是 Scope.TRANSIENT 确保我们在每个功能模块中都拥有唯一的实例MyLogger，而不是全局单例
 export class MyLoggerService implements LoggerService {
@@ -11,10 +12,12 @@ export class MyLoggerService implements LoggerService {
     let transport = [];
     // 生产环境，输出到文件
     if (process.env.NODE_ENV === 'production') {
+      const logDirectory = path.join(process.cwd(), 'logs');
+
       transport = [
         new transports.DailyRotateFile({
-          // 日志文件文件夹，建议使用path.join()方式来处理，或者process.cwd()来设置，此处仅作示范
-          dirname: 'logs',
+          // 日志文件文件夹，使用绝对路径
+          dirname: logDirectory,
           // 日志文件名 %DATE% 会自动设置为当前日期
           filename: 'application-%DATE%.info.log',
           // 日期格式
@@ -27,18 +30,18 @@ export class MyLoggerService implements LoggerService {
           maxFiles: '14d',
           // info及以下的日志
           level: 'info',
-          auditFile: 'logs/audit-info.json',
+          auditFile: path.join(logDirectory, 'audit-info.json'),
         }),
         // 同上述方法，区分error日志和info日志，保存在不同文件，方便问题排查
         new transports.DailyRotateFile({
-          dirname: 'logs',
+          dirname: logDirectory,
           filename: 'application-%DATE%.error.log',
           datePattern: 'YYYY-MM-DD',
           zippedArchive: false,
           maxSize: '10m',
           maxFiles: '14d',
           level: 'error',
-          auditFile: 'logs/audit-error.json',
+          auditFile: path.join(logDirectory, 'audit-error.json'),
         }),
       ];
     } else {
