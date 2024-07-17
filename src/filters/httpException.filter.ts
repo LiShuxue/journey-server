@@ -11,13 +11,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   catch(exception: HttpException, host: ArgumentsHost) {
     // 在这里处理异常并返回响应
-    const response = host.switchToHttp().getResponse();
+    const ctx = host.switchToHttp();
+    const request = ctx.getRequest();
+    const response = ctx.getResponse();
     const httpStatus = exception.getStatus();
     const exceptionRes: any = exception.getResponse();
 
     const res = {
       code: httpStatus,
       name: exception.name,
+      ip: request.ip,
+      path: request.url,
       message: exceptionRes?.message || exceptionRes,
     };
     this.myLogger.error('error response: ' + JSON.stringify(res));
