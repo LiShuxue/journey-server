@@ -21,6 +21,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       code: httpStatus,
       name: exception.name,
       ip: request.ip,
+      'x-forwarded-for': request.headers['x-forwarded-for'],
+      'x-real-ip': request.headers['x-real-ip'],
       path: request.url,
       message: exceptionRes?.message || exceptionRes,
     };
