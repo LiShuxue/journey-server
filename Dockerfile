@@ -1,5 +1,5 @@
 # 基础镜像
-FROM node:18.20.0-alpine3.19
+FROM node:20-alpine
 
 # 设置环境代理源
 RUN corepack enable && npm config set registry https://registry.npmmirror.com && yarn config set registry https://registry.npmmirror.com && pnpm config set registry https://registry.npmmirror.com
